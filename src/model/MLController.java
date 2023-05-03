@@ -1,15 +1,16 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import exceptions.*;
 
 public class MLController {
-
+    private Searcher<Product> productSearcher;
+    private Searcher<Order> orderSearcher;
     private MercadoLibre mercadoLibre;
     private ManagerPersistence managerPersistence;
 
     public MLController() {
-
+        productSearcher= new Searcher<>();
+        orderSearcher= new Searcher<>();
         mercadoLibre = new MercadoLibre();
         managerPersistence = new ManagerPersistence();
         openProgram();
@@ -31,59 +32,32 @@ public class MLController {
         managerPersistence.saveProducts(mercadoLibre.getProducts());
     }
 
-    public String addProduct(String name, String description, double price, int amount, int category) {
-        return mercadoLibre.addProduct(new Product(name, description, price, amount, getCategory(category)));
+    public String addProduct(String name, String description, double price, int amount, int category) throws ObjectWithSameName {
+        Product product = new Product(name, description, price, amount, getCategory(category));
+        if(searchProduct(product)!=-1){
+            mercadoLibre.addProduct(product);
+            return "Product Added Correctly ";
+        }else{
+            throw new ObjectWithSameName("There is another product with the same name");
+        }
     }
 
-    public String addOrder(String nameBuyer, int price) {
-        return mercadoLibre.addOrder(new Order(nameBuyer, price));
-    }
-
-    public String addCoupleOrder( int amount, int product){
+    public String addOrder(String nameBuyer,int amount ,int product)  {
         Couple couple = new Couple(amount, mercadoLibre.getProducts().get(product));
+        mercadoLibre.addOrder(new Order(nameBuyer));
+        mercadoLibre.getOrders().get(mercadoLibre.getOrders().size()-1).addCouple(couple);
+        return "Order created correctly";
         
     }
 
-    /* 
-    public int binarySearchProduct(mercadoLibre.getProducts(), Product goal, int option){
-		int left = 0; // obtenemos una referencia al puntero inicial  
-		int right = arr.size() - 1; // obtenemos una referencia al puntero final 
+    public int searchOrder(Order order){
+        return orderSearcher.binarySearchProduct(mercadoLibre.getOrders(), order);
+    }
 
-        switch(){
-            case 0:
-                while(left <= right){ 
+    public int searchProduct(Product product){
+        return productSearcher.binarySearchProduct(mercadoLibre.getProducts(), product);
+    }
 
-                    int mid = (right + left)/2; 
-
-                    Product mid
-
-                    if(goal.getName() < arr.get(mid)){
-                        right = mid - 1;  
-                    }
-                    else if(goal > arr.get(mid)){
-                        left = mid + 1; 
-                    }
-                    // si lo encontramos retornamos el elemento 
-                    else {
-                        return mid; 
-                    }
-                }
-            break;
-
-            case 1:
-                break;
-
-            case 2:
-                break;
-
-            case 3:
-                break;
-
-            default :
-             break;
-        }
-	}
-    */
     public Category getCategory(int typeCategory) {
         return Category.values()[typeCategory];
     }

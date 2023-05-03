@@ -11,11 +11,20 @@ public class Order implements Comparable <Order> {
     private int price;
     private Date date;
     
-    public Order(String nameBuyer, int price) {
+    public Order(String nameBuyer) {
         this.nameBuyer = nameBuyer;
         this.products = new ArrayList<>();
-        this.price = price;
         this.date = Calendar.getInstance().getTime();
+    }
+
+    public void calculateOrderPrice(){
+        for (Couple couple : products) {
+            this.price += couple.getProduct().getPrice() * couple.getAmount();
+        }
+    }
+
+    public void addCouple(Couple couple){
+        products.add(couple);
     }
 
     @Override
