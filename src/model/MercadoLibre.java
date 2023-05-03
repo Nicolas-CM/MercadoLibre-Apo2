@@ -40,4 +40,32 @@ public class MercadoLibre {
         this.products = products;
     }
 
+    /**
+     * Description: Add a new Product
+     * 
+     * @param product The new product
+     * @return The result of the operation
+     */
+    public String addProduct(Product product){
+        if (products.add(product)) {
+            return "The process was correct";
+        } else {
+            return "The process was incorrect";
+        }
+    }
+    
+    /**
+     * Description: Add a new Order
+     * 
+     * @param order The new order
+     * @return The result of the operation
+     */
+    public String addOrder(Order order){
+        if (orders.add(order)) {
+            return "The process was correct";
+        } else {
+            return "The process was incorrect";
+        }
+    }
+    
 }

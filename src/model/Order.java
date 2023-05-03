@@ -1,20 +1,27 @@
 package model;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Order {
+public class Order implements Comparable <Order> {
     
     private String nameBuyer;
-    private ArrayList<Product> products;
+    private ArrayList<Couple> products;
     private int price;
-    private Calendar date;
+    private Date date;
     
-    public Order(String nameBuyer, ArrayList<Product> products, int price, Calendar date) {
+    public Order(String nameBuyer, int price) {
         this.nameBuyer = nameBuyer;
-        this.products = products;
+        this.products = new ArrayList<>();
         this.price = price;
-        this.date = date;
+        this.date = Calendar.getInstance().getTime();
+    }
+
+    @Override
+    public int compareTo(Order order2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
     }
 
     /**
@@ -32,16 +39,16 @@ public class Order {
     }
 
     /**
-     * @return ArrayList<Product> return the products
+     * @return ArrayList<Couple<Integer, Product>> return the products
      */
-    public ArrayList<Product> getProducts() {
+    public ArrayList<Couple> getProducts() {
         return products;
     }
 
     /**
      * @param products the products to set
      */
-    public void setProducts(ArrayList<Product> products) {
+    public void setProducts(ArrayList<Couple> products) {
         this.products = products;
     }
 
@@ -60,16 +67,16 @@ public class Order {
     }
 
     /**
-     * @return Calendar return the date
+     * @return Date return the date
      */
-    public Calendar getDate() {
+    public Date getDate() {
         return date;
     }
 
     /**
      * @param date the date to set
      */
-    public void setDate(Calendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
