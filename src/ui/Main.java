@@ -4,6 +4,9 @@
 package ui;
 
 import java.util.Scanner;
+
+import exceptions.ObjectOutOfStock;
+import exceptions.ObjectWithSameName;
 import model.MLController;
 
 public class Main {
@@ -58,8 +61,8 @@ public class Main {
         boolean exit = false;
         do {
             System.out.println(
-                    "\n----------\nMain Menu\n---------- Choose a option:\n 0) Exit of program\n 1) Play" +
-                            "\n 2) See Rankig" +
+                    "\n----------\nMain Menu\n---------- Choose a option:\n 0) Exit of program\n 1) Add Product" +
+                            "\n 2) Add Order" +
                             "\n-------------------");
             optionMenu = validateIntegerOption();
 
@@ -68,10 +71,13 @@ public class Main {
                     exit = true;
                     break;
                 case 1:
-                    // play();
+                    addProduct();
                     break;
                 case 2:
-                    // System.out.println(seeRanking());
+                    addOrder();
+                    break;
+                case 3:
+                    System.out.println(controller.showOrders());
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -82,7 +88,7 @@ public class Main {
 
     public void addProduct() {
         reader.nextLine();
-        System.out.println("Write the product name");
+        System.out.println("\nWrite the product name");
         String name = reader.nextLine();
         System.out.println("Write the product description ");
         String description = reader.nextLine();
@@ -93,23 +99,46 @@ public class Main {
         System.out.println("Write the category of product");
         int category = selectCategory();
 
-        System.out.println(controller.addProduct(name, description, price, amount, category));
+        try {
+            System.out.println("\n" + controller.addProduct(name, description, price, amount, category));
+        } catch (ObjectWithSameName e) {
+            System.out.println("\n" + e.getMessage() + "\n");
+            addProduct();
+        }
     }
 
     public void addOrder() {
+        int finish = 0;
         reader.nextLine();
-        System.out.println("Write the product name");
-        String name = reader.nextLine();
-        System.out.println("Write the product description ");
-        String description = reader.nextLine();
-        System.out.println("Write the product price");
-        double price = reader.nextDouble();
-        System.out.println("Write the amount of product");
-        int amount = reader.nextInt();
-        System.out.println("Write the category of product");
-        int category = selectCategory();
+        System.out.println("\nWrite Buyer's name");
+        String nameBuyer = reader.nextLine();
+        controller.addOrder(nameBuyer);
+        while (finish == 0) {
+            int product = selectProduct();
+            System.out.println("Write the Amount of this product");
+            int amount = validateIntegerOption();
+            try {
+                System.out.println(controller.addProductToOrder(amount, product));
+                System.out.println("If u wanna add another product write 0, if not write 1");
+                finish = validateIntegerOption();
+            } catch (ObjectOutOfStock e) {
+                System.out.println("\n" + e.getMessage());
+            }
+        }
 
-        System.out.println(controller.addOrder(name, null, category));
+    }
+
+    public int selectProduct() {
+        System.out.println(controller.showProducts());
+        System.out.println("Select one product");
+        int o = validateIntegerOption();
+        while (o > controller.getProductsSize() || o < 1) {
+            System.out.println("Select a Valid product");
+            System.out.println("Select one product");
+            System.out.println(controller.showProducts());
+            o = validateIntegerOption();
+        }
+        return o;
     }
 
     public int selectCategory() {

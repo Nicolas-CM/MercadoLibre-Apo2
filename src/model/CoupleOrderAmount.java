@@ -1,11 +1,11 @@
 package model;
 
-public class Couple {
+public class CoupleOrderAmount {
 
     private int amount;
     private Product product;
 
-    public Couple(int amount, Product product) {
+    public CoupleOrderAmount(int amount, Product product) {
         this.amount = amount;
         this.product = product;
     }
@@ -36,6 +36,12 @@ public class Couple {
      */
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return product.toString() + "\nAmount: " + amount;
     }
 
 }

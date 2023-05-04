@@ -6,11 +6,21 @@ public class MercadoLibre {
     
     private ArrayList<Order> orders;
     private ArrayList<Product> products;
+    private static MercadoLibre instance;
     
-    public MercadoLibre() {
+    private MercadoLibre() {
         orders = new ArrayList<>();
         products = new ArrayList<>();
     }
+
+     public static MercadoLibre getInstance() {
+        if(instance == null) {
+            instance = new MercadoLibre();
+        }
+        return instance;
+    }
+
+
 
     /**
      * @return ArrayList<Order> return the orders

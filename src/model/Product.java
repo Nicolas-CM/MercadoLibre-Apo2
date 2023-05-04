@@ -1,6 +1,6 @@
 package model;
 
-public class Product implements Comparable<Product> {
+public class Product  {
 
     private String name;
     private String description;
@@ -9,12 +9,12 @@ public class Product implements Comparable<Product> {
     private Category category;
     private int numberPurchases;
 
-    public Product(String name, String description, double price, int amount, Category category) {
+    public Product(String name, String description, double price, int amount, int category) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.amount = amount;
-        this.category = category;
+        this.category = Category.values()[category];
         this.numberPurchases = 0;
     }
 
@@ -103,11 +103,9 @@ public class Product implements Comparable<Product> {
         this.numberPurchases = numberPurchases;
     }
 
-
     @Override
-    public int compareTo(Product o) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
+    public String toString() {
+        return "Name: " + name + "\nDescription: " + description + "\nPrice: " + price + "\nActual stock: "+ amount + "\nCategory: " + category;
     }
 
 }

@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Order implements Comparable <Order> {
+public class Order {
     
     private String nameBuyer;
-    private ArrayList<Couple> products;
+    private ArrayList<CoupleOrderAmount> products;
     private int price;
     private Date date;
     
@@ -18,19 +18,13 @@ public class Order implements Comparable <Order> {
     }
 
     public void calculateOrderPrice(){
-        for (Couple couple : products) {
+        for (CoupleOrderAmount couple : products) {
             this.price += couple.getProduct().getPrice() * couple.getAmount();
         }
     }
 
-    public void addCouple(Couple couple){
+    public void addCouple(CoupleOrderAmount couple){
         products.add(couple);
-    }
-
-    @Override
-    public int compareTo(Order order2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
     }
 
     /**
@@ -48,16 +42,16 @@ public class Order implements Comparable <Order> {
     }
 
     /**
-     * @return ArrayList<Couple<Integer, Product>> return the products
+     * @return ArrayList<CoupleOrderAmount<Integer, Product>> return the products
      */
-    public ArrayList<Couple> getProducts() {
+    public ArrayList<CoupleOrderAmount> getProducts() {
         return products;
     }
 
     /**
      * @param products the products to set
      */
-    public void setProducts(ArrayList<Couple> products) {
+    public void setProducts(ArrayList<CoupleOrderAmount> products) {
         this.products = products;
     }
 
@@ -88,5 +82,23 @@ public class Order implements Comparable <Order> {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public String showProducts() {
+        String msj = "\nPRODUCTS OF THE LIST";
+;        if (!products.isEmpty()) {
+            for (int i = 0; i < products.size(); i++) {
+                msj += "\n" + (i + 1) + ") " + products.get(i).toString();
+            }
+            return msj;
+        } else {
+            return "The order list is Empty";
+
+                   }
+    }
+
+    @Override
+    public String toString() {
+        return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts();    }
+
 
 }
