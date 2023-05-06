@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -9,12 +10,14 @@ public class Order {
     private String nameBuyer;
     private ArrayList<CoupleOrderAmount> products;
     private int price;
-    private Date date;
+    private String date;
     
     public Order(String nameBuyer) {
         this.nameBuyer = nameBuyer;
         this.products = new ArrayList<>();
-        this.date = Calendar.getInstance().getTime();
+        Date cal = Calendar.getInstance().getTime();
+        SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy"); // Definiton of the format for date
+        this.date = formatedDate.format(cal.getTime()); // Format the date
     }
 
     public void calculateOrderPrice(){
@@ -72,19 +75,19 @@ public class Order {
     /**
      * @return Date return the date
      */
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
     /**
      * @param date the date to set
      */
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
     public String showProducts() {
-        String msj = "\nPRODUCTS OF THE LIST";
+        String msj = "\nPRODUCTS OF THE ORDER";
 ;        if (!products.isEmpty()) {
             for (int i = 0; i < products.size(); i++) {
                 msj += "\n" + (i + 1) + ") " + products.get(i).toString();
@@ -98,7 +101,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts();    }
+        return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts() + "\n";    }
 
 
 }

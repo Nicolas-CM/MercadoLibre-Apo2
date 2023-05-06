@@ -1,6 +1,7 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import exceptions.*;
 
@@ -36,9 +37,12 @@ public class MLController {
     }
 
     public String addProduct(String name, String description, double price, int amount, int category)
-            throws ObjectWithSameName {
-        Product product = new Product(name, description, price, amount, category);
-        if (searchProductByName(product) == -1) {
+            throws ObjectWithSameName, ObjectWithInvalidAmount {
+        Product product = new Product(name.toLowerCase(), description, price, amount, category);
+        if (amount < 0) {
+            throw new ObjectWithInvalidAmount("Please write a valid amount (amount must be grater than or equal to 0)");
+        }
+        if (searchProductByName(name.toLowerCase()) == -1) {
             mercadoLibre.addProduct(product);
             return "Product Added Correctly ";
         } else {
@@ -51,49 +55,72 @@ public class MLController {
         mercadoLibre.getOrders().add(new Order(nameBuyer));
     }
 
-    public String addProductToOrder(int amount, int product) throws ObjectOutOfStock {
-        int pos = mercadoLibre.getOrders().size() - 1;
-        mercadoLibre.getOrders().get(pos);
-        if (mercadoLibre.getProducts().get(product - 1).getAmount() >= amount) {
-            mercadoLibre.getProducts().get(product - 1)
-                    .setAmount(mercadoLibre.getProducts().get(product - 1).getAmount() - amount);
-            mercadoLibre.getOrders().get(pos)
-                    .addCouple(new CoupleOrderAmount(amount, mercadoLibre.getProducts().get(product - 1)));
-            return "Product Added to the Order correctly";
-        } else {
-            throw new ObjectOutOfStock("The product is Out of Stock, select another one");
+    public String editAmountProduct(String name, int newAmount) throws ObjectWithInvalidAmount {
+        int pos = searchProductByName(name);
+        if (newAmount < 0) {
+            throw new ObjectWithInvalidAmount("Please write a valid amount (amount must be grater than or equal to 0)");
         }
+        if (searchProductByName(name) == -1) {
+            return "Product not found";
+        } else {
+            mercadoLibre.getProducts().get(pos).setAmount(newAmount);
+            return "The quantity of the product has been changed successfully";
+
+        }
+
     }
 
-    public int searchProductByName(Product product) {
+    public String addProductToOrder(int amount, String product) throws ObjectOutOfStock {
+        int pos = searchProductByName(product.toLowerCase());
+        if (pos != -1) {
+            if (mercadoLibre.getProducts().get(pos).getAmount() >= amount) {
+                mercadoLibre.getProducts().get(pos)
+                        .setAmount(mercadoLibre.getProducts().get(pos).getAmount() - amount);
+                mercadoLibre.getOrders().get(pos)
+                        .addCouple(new CoupleOrderAmount(amount, mercadoLibre.getProducts().get(pos)));
+                return "Product Added to the Order correctly";
+            } else {
+                throw new ObjectOutOfStock("The product is Out of Stock, select another one");
+            }
+        }
+        return "";
+    }
+
+    public int searchProductByName(String product) {
+        Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return p1.getName().compareTo(p2.getName());
+            }
+        });
         String[] arr = new String[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getName();
         }
-        return stringSearcher.binarySearchProduct(arr, product.getName());
+        return stringSearcher.binarySearch(arr, product);
     }
 
     public String showProducts() {
-        String msj = "ORDER LIST";
+        String msj = "PRODUCTS LIST";
         if (!mercadoLibre.getProducts().isEmpty()) {
             for (int i = 0; i < mercadoLibre.getProducts().size(); i++) {
                 msj += "\n" + (i + 1) + ") " + mercadoLibre.getProducts().get(i).toString();
             }
             return msj;
         } else {
-            return "The order list is Empty";
+            return "The products list is Empty";
         }
     }
 
     public String showOrders() {
-        String msj = "PRODUCT LIST";
+        String msj = "ORDERS LIST";
         if (!mercadoLibre.getOrders().isEmpty()) {
             for (int i = 0; i < mercadoLibre.getOrders().size(); i++) {
                 msj += "\n" + (i + 1) + ") " + mercadoLibre.getOrders().get(i).toString();
             }
             return msj;
         } else {
-            return "The product list is Empty";
+            return "The orders list is Empty";
         }
     }
 

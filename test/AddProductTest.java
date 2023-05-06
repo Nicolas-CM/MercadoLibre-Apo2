@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 
 
-public class AddProdcutTest {
+public class AddProductTest {
 
     private MercadoLibre container;
     private MLController controller;
@@ -16,13 +16,8 @@ public class AddProdcutTest {
     @Before
     public void setup(){
         controller = new MLController();
+        container = MercadoLibre.getInstance();
     }
-
-
-
-    
-
-    
 
     @Test
     public void testAddProductSuccess() throws ObjectWithSameName {
@@ -33,24 +28,28 @@ public class AddProdcutTest {
     }
 
     @Test(expected = ObjectWithSameName.class)
-    public void testAddProductWithSameName() throws ObjectWithSameName {
+    public void testAddProductWithSameName() throws ObjectWithSameName, ObjectWithInvalidAmount {
         MLController controller = new MLController();
         controller.addProduct("Macbook Pro", "Apple Laptop", 1299.99, 10, 1);
         controller.addProduct("Macbook Pro", "Apple Laptop", 300000, 10, 1);
     }
 
     @Test
-    public void testAddedProductHasCorrectValues() throws ObjectWithSameName {
+    public void testAddedProductHasCorrectValues() throws ObjectWithSameName, ObjectWithInvalidAmount {
       
     
         controller.addProduct("Macbook Pro", "Apple Laptop", 1299.99, 10, 1);
         Product product = controller.getMercadoLibre().getProducts().get(0); 
-        assertEquals("Macbook Pro", product.getName());
+        assertEquals("macbook pro", product.getName());
         assertEquals("Apple Laptop", product.getDescription());
         assertEquals(1299.99, product.getPrice(), 0.01);
         assertEquals(10, product.getAmount());
         assertEquals("ELECTRONIC", product.getCategory().toString());
     }
+
+
+
+
 
    
 }
