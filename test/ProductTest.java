@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 
 
-public class AddProductTest {
+public class ProductTest {
 
     private MercadoLibre container;
     private MLController controller;
@@ -18,6 +18,8 @@ public class AddProductTest {
         controller = new MLController();
         container = MercadoLibre.getInstance();
     }
+
+    //addProduct
 
     @Test
     public void testAddProductSuccess() throws ObjectWithSameName {

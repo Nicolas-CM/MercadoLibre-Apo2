@@ -20,12 +20,23 @@ public class Order {
         this.date = formatedDate.format(cal.getTime()); // Format the date
     }
 
+    /**
+     * This function calculates the total price of an order by multiplying the price of each product by
+     * its corresponding amount and summing them up.
+     */
     public void calculateOrderPrice(){
         for (CoupleOrderAmount couple : products) {
             this.price += couple.getProduct().getPrice() * couple.getAmount();
         }
     }
 
+    /**
+     * The function adds a couple order amount to a list of products.
+     * 
+     * @param couple The parameter "couple" is of type "CoupleOrderAmount", which is likely a custom
+     * class that represents a couple of values related to an order, such as the product and the amount
+     * ordered. The method "addCouple" adds this couple object to a list of products.
+     */
     public void addCouple(CoupleOrderAmount couple){
         products.add(couple);
     }
@@ -86,6 +97,14 @@ public class Order {
         this.date = date;
     }
 
+    /**
+     * The function displays a list of products in an order or returns a message if the order list is
+     * empty.
+     * 
+     * @return The method `showProducts()` returns a string message that shows the products of the
+     * order. If the list of products is not empty, it shows each product with its corresponding index.
+     * If the list is empty, it returns a message indicating that the order list is empty.
+     */
     public String showProducts() {
         String msj = "\nPRODUCTS OF THE ORDER";
 ;        if (!products.isEmpty()) {
@@ -100,6 +119,11 @@ public class Order {
     }
 
     @Override
+    // The `toString()` method is overriding the default implementation of the method inherited from
+    // the `Object` class. It returns a string representation of the `Order` object, which includes the
+    // name of the buyer, the total price of the order, the date of the order, and a list of the
+    // products ordered. This method is often used for debugging and logging purposes, as well as for
+    // displaying the object's information in a user interface.
     public String toString() {
         return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts() + "\n";    }
 

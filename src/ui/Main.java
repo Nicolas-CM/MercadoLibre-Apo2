@@ -22,6 +22,7 @@ public class Main {
         Main mercadoLibre = new Main();
         mercadoLibre.hello();
         mercadoLibre.mainMenu();
+        mercadoLibre.closeProgram();
         mercadoLibre.bye();
     }
 
@@ -41,7 +42,7 @@ public class Main {
      * Description: Print a message of goodbye
      */
     public void bye() {
-        System.out.println("\n Exiting of the program... Thanks for use me  :)");
+        System.out.println("\n Exiting of the program (saving data)... Thanks for use me  :)");
     }
 
     /**
@@ -65,6 +66,8 @@ public class Main {
                             "\n 3) Edit product" +
                             "\n 4) Show all products" +
                             "\n 5) Show all orders" +
+                            "\n 6) Search Order" +
+                            "\n 7) Search Product" +
                             "\n-------------------");
             optionMenu = validateIntegerOption();
             System.out.println("\n");
@@ -88,6 +91,12 @@ public class Main {
                 case 5:
                     System.out.println(controller.showOrders());
                     break;
+                case 6:
+                    //System.out.println(controller.showOrders());
+                    break;
+                case 7:
+                    //System.out.println(controller.showOrders());
+                    break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
                     break;
@@ -95,6 +104,12 @@ public class Main {
         } while (exit == false);
     }
 
+    
+    /**
+     * This function prompts the user to enter a product name and a new amount for the product, and
+     * then calls a controller method to edit the amount of the product, handling any exceptions that
+     * may occur.
+     */
     public void editAmountProduct() {
         reader.nextLine();
         System.out.println("\nWrite the product name");
@@ -112,6 +127,10 @@ public class Main {
 
     }
 
+    /**
+     * This function prompts the user to input information about a product and then adds it to a
+     * controller object, handling any exceptions that may occur.
+     */
     public void addProduct() {
         reader.nextLine();
         System.out.println("\nWrite the product name");
@@ -137,6 +156,10 @@ public class Main {
         }
     }
 
+    /**
+     * This function adds an order by prompting the user to input the buyer's name, product name, and
+     * amount, and then adding the product to the order until the user chooses to finish.
+     */
     public void addOrder() {
         System.out.println(
                 "The offer will now be registered, the registration date will be automatically saved by the program.");
@@ -160,6 +183,11 @@ public class Main {
         }
     }
 
+    /**
+     * This function prompts the user to select a product from a list and validates their input.
+     * 
+     * @return The method is returning an integer value, which is the user's selected product.
+     */
     public int selectProduct() {
         System.out.println(controller.showProducts());
         System.out.println("Select one product");
@@ -173,6 +201,11 @@ public class Main {
         return o;
     }
 
+    /**
+     * This Java function prompts the user to select a category type and returns the selected category.
+     * 
+     * @return The method is returning an integer value which represents the selected category.
+     */
     public int selectCategory() {
         boolean exit = false;
         int typeCategory = 0;
@@ -214,9 +247,8 @@ public class Main {
      *
      */
     public void searchProductMenu() {
-        int optionMenu = 0;
+        int optionMenu, exactOrRange = 0;
         boolean exit = false;
-        int exactOrRange = 0;
         do {
             System.out.println(
                     "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu\n 1) Search by name"
@@ -256,9 +288,8 @@ public class Main {
      *
      */
     public void searchOrderMenu() {
-        int optionMenu = 0;
+        int optionMenu, exactOrRange = 0;
         boolean exit = false;
-        int exactOrRange = 0;
         do {
             System.out.println(
                     "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu" + 
@@ -311,6 +342,13 @@ public class Main {
         return optionMenu;
     }
 
+    /**
+     * The function prompts the user to enter a range minimum and maximum, ensuring that the maximum is
+     * greater than or equal to the minimum, and returns an array containing these values.
+     * 
+     * @return An array of two doubles, where the first element is the range minimum and the second
+     * element is the range maximum.
+     */
     public double[] rangeMinAndMax(){
         double[] minAndMax = new double[2];
 

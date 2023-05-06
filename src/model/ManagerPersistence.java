@@ -64,6 +64,11 @@ public class ManagerPersistence {
         }
     }
 
+    /**
+     * This function loads orders from a JSON file and returns them as an ArrayList.
+     * 
+     * @return An ArrayList of Order objects is being returned.
+     */
     public ArrayList<Order> loadOrders() {
         File location = new File(PROJECT_DIR + "/data/orders.json");
         ArrayList<Order> orders = new ArrayList<>();
@@ -87,6 +92,11 @@ public class ManagerPersistence {
         return orders;
     }
 
+    /**
+     * This function loads product data from a JSON file and returns an ArrayList of Product objects.
+     * 
+     * @return An ArrayList of Product objects is being returned.
+     */
     public ArrayList<Product> loadProducts() {
         File location = new File(PROJECT_DIR + "/data/products.json");
         ArrayList<Product> products = new ArrayList<>();

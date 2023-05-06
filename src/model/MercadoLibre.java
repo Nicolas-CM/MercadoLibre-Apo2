@@ -13,6 +13,15 @@ public class MercadoLibre {
         products = new ArrayList<>();
     }
 
+     /**
+      * The function returns an instance of the MercadoLibre class, creating it if it doesn't already
+      * exist.
+      * 
+      * @return The method `getInstance()` returns an instance of the `MercadoLibre` class. If the
+      * `instance` variable is `null`, it creates a new instance of the `MercadoLibre` class and
+      * assigns it to the `instance` variable before returning it. If the `instance` variable is not
+      * `null`, it simply returns the existing instance.
+      */
      public static MercadoLibre getInstance() {
         if(instance == null) {
             instance = new MercadoLibre();
