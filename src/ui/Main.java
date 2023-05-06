@@ -183,6 +183,14 @@ public class Main {
         }
     }
 
+    public void searchExactString(String typeSearch){
+        System.out.println("Enter the " + typeSearch + " for search exact");
+        String toSearch = reader.nextLine();
+        System.out.println();
+    }
+    
+    
+
     /**
      * This function prompts the user to select a product from a list and validates their input.
      * 
@@ -247,7 +255,8 @@ public class Main {
      *
      */
     public void searchProductMenu() {
-        int optionMenu, exactOrRange = 0;
+        int optionMenu = 0;
+        boolean rangeOrExact = false;
         boolean exit = false;
         do {
             System.out.println(
@@ -259,13 +268,17 @@ public class Main {
                             "\n-------------------");
             optionMenu = validateIntegerOption();
             System.out.println("\n");
-            exactOrRange = exactOrRange();
+            rangeOrExact = rangeOrExact();
             switch (optionMenu) {
                 case 0:
                     exit = true;
                     break;
                 case 1:
-                    
+                    if (rangeOrExact) {
+                        
+                    } else {
+                        searchExactString("name");
+                    }
                     break;
                 case 2:
                     //
@@ -288,7 +301,8 @@ public class Main {
      *
      */
     public void searchOrderMenu() {
-        int optionMenu, exactOrRange = 0;
+        int optionMenu=0;
+        boolean rangeOrExact = false;
         boolean exit = false;
         do {
             System.out.println(
@@ -299,7 +313,7 @@ public class Main {
                             "\n-------------------");
             optionMenu = validateIntegerOption();
             System.out.println("\n");
-            exactOrRange = exactOrRange();
+            rangeOrExact = rangeOrExact();
             switch (optionMenu) {
                 case 0:
                     exit = true;
@@ -320,11 +334,15 @@ public class Main {
         } while (exit == false);
     }
 
+
     /**
-     * Description: Allows select the option of the search exact or by interval
-     *
+     * This function prompts the user to choose between a range search or an exact search and returns a
+     * boolean value based on the user's choice.
+     * 
+     * @return A boolean value indicating whether the user chose a range search (true) or an exact
+     * search (false).
      */
-    public int exactOrRange() {
+    public boolean rangeOrExact() {
         int optionMenu = 0;
         boolean exit = false;
         System.out.println(
@@ -339,7 +357,10 @@ public class Main {
                 exit = true;
             }
         } while (!exit);
-        return optionMenu;
+        if(optionMenu==1){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -366,5 +387,7 @@ public class Main {
 
         return minAndMax;
     }
+
+    
     
 }

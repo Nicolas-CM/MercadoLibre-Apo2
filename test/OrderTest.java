@@ -36,7 +36,7 @@ public class OrderTest {
         // Prueba que la cantidad de un producto se cambie correctamente cuando se proporciona un valor válido
         String result = controller.editAmountProduct("Macbook Pro 2018", 2);
         assertEquals("The quantity of the product has been changed successfully", result);
-        int pos = controller.searchProductByName("Macbook Pro 2018");
+        int pos = controller.searchProductPosByName("Macbook Pro 2018");
         assertEquals(2, container.getProducts().get(pos).getAmount());
     }
 
