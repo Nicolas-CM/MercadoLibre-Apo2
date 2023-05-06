@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,15 +10,24 @@ public class Order {
     
     private String nameBuyer;
     private ArrayList<CoupleOrderAmount> products;
-    private int price;
+    private double price;
     private String date;
+    private Date dateFormatDate;
     
-    public Order(String nameBuyer) {
+    public Order(String nameBuyer) throws ParseException {
         this.nameBuyer = nameBuyer;
         this.products = new ArrayList<>();
-        Date cal = Calendar.getInstance().getTime();
+        //Creating instance of calendar
+        Calendar dateWithHour = Calendar.getInstance();
+        //Eliminating the atributes of a hour of the date
+        dateWithHour.clear(Calendar.HOUR_OF_DAY);
+        dateWithHour.clear(Calendar.MINUTE);
+        dateWithHour.clear(Calendar.SECOND);
+        dateWithHour.clear(Calendar.MILLISECOND);
+
         SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy"); // Definiton of the format for date
-        this.date = formatedDate.format(cal.getTime()); // Format the date
+        this.date = formatedDate.format(dateFormatDate.getTime()); // Format the date
+        this.dateFormatDate = formatedDate.parse(date);
     }
 
     /**
@@ -72,14 +82,14 @@ public class Order {
     /**
      * @return int return the price
      */
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
     /**
      * @param price the price to set
      */
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -127,5 +137,20 @@ public class Order {
     public String toString() {
         return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts() + "\n";    }
 
+
+
+    /**
+     * @return Date return the dateFormatDate
+     */
+    public Date getDateFormatDate() {
+        return dateFormatDate;
+    }
+
+    /**
+     * @param dateFormatDate the dateFormatDate to set
+     */
+    public void setDateFormatDate(Date dateFormatDate) {
+        this.dateFormatDate = dateFormatDate;
+    }
 
 }

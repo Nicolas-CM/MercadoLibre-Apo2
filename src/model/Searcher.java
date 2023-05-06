@@ -28,15 +28,63 @@ public class Searcher<K extends Comparable<K>> {
 	 *         within the range
 	 *         specified by the first and last parameters.
 	 */
-	public ArrayList<K> binarySearchByRange(K[] array, K first, K last) {
-		int firstTemp = binarySearch(array, first, true);
-		int lastTemp = binarySearch(array, last, false);
-
-		ArrayList<K> newArrayList = new ArrayList<>();
-		for (int index = firstTemp; index < lastTemp; index++) {
-			newArrayList.add(array[index]);
+	public ArrayList<Integer> binarySearchByRange(K[] array, K first, K last) {
+		int firstTemp = binarySearchRange(array, first, true);
+		int lastTemp = binarySearchRange(array, last, false);
+		if (firstTemp == -1) {
+			firstTemp = 0;
 		}
-		return newArrayList;
+		if(lastTemp == -1){
+			lastTemp = array.length-1;
+		}
+		if (firstTemp != -1 ) {
+			ArrayList<Integer> newArrayList = new ArrayList<>();
+			for (int index = firstTemp; index <= lastTemp; index++) {
+				newArrayList.add(index);
+			}
+			return newArrayList;
+		}else{
+			return null;
+		}
+	}
+
+	public int binarySearchRange(K[] arr, K target, boolean lower) {
+		int left = 0;
+		int right = arr.length - 1;
+		int index = -1;
+
+		// Verificar si el valor objetivo está fuera del rango del arreglo
+		if (target.compareTo(arr[left]) < 0 || target.compareTo(arr[right]) > 0) {
+			return -1;
+		}
+
+		while (left <= right) {
+			int mid = (left + right) / 2;
+
+			if (arr[mid].compareTo(target) == 0) {
+				index = mid;
+				if (lower) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+			} else if (arr[mid].compareTo(target) < 0) {
+				left = mid + 1;
+			} else {
+				right = mid - 1;
+			}
+		}
+
+		// Si no se encontró el valor exacto, ajustar el índice según el límite
+		if (index == -1) {
+			if (lower) {
+				index = left;
+			} else {
+				index = right;
+			}
+		}
+
+		return index;
 	}
 
 	/**
@@ -75,39 +123,5 @@ public class Searcher<K extends Comparable<K>> {
 		}
 		// si no retornamos -1
 		return -1;
-	}
-
-	public int binarySearch(K[] arr, K target, boolean lower) {
-		int left = 0;
-		int right = arr.length - 1;
-		int index = -1;
-
-		while (left <= right) {
-			int mid = (left + right) / 2;
-
-			if (arr[mid].compareTo(target) == 0) {
-				index = mid;
-				if (lower) {
-					right = mid - 1;
-				} else {
-					left = mid + 1;
-				}
-			} else if (arr[mid].compareTo(target) < 0) {
-				left = mid + 1;
-			} else {
-				right = mid - 1;
-			}
-		}
-
-		// Si no se encontró el valor exacto, ajustar el índice según el límite
-		if (index == -1) {
-			if (lower) {
-				index = left;
-			} else {
-				index = right;
-			}
-		}
-
-		return index;
 	}
 }

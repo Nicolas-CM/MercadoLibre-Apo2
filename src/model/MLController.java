@@ -1,5 +1,7 @@
 package model;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -8,6 +10,7 @@ import exceptions.*;
 public class MLController {
     private Searcher<String> stringSearcher;
     private Searcher<Double> doubleSearcher;
+    private Searcher<Integer> integerSearcher;
 
     private MercadoLibre mercadoLibre;
     private ManagerPersistence managerPersistence;
@@ -34,28 +37,6 @@ public class MLController {
     public void closeProgram() {
         managerPersistence.saveOrders(mercadoLibre.getOrders());
         managerPersistence.saveProducts(mercadoLibre.getProducts());
-    }
-
-    public String searchExactString(String toSearch, int option) {
-
-        switch (option) {
-            case 1:
-                if (searchProductPosByName(toSearch) != -1) {
-                    return "The product was found: \n"
-                            + mercadoLibre.getProducts().get(searchProductPosByName(toSearch)).toString();
-                }
-                return "The product does not exists";
-            case 2:
-                
-                break;
-            case 3:
-
-                break;
-
-            default:
-                break;
-        }
-
     }
 
     /**
@@ -109,8 +90,9 @@ public class MLController {
      *                  is used to create a
      *                  new Order object and add it to the list of orders in the
      *                  MercadoLibre system.
+     * @throws ParseException
      */
-    public void addOrder(String nameBuyer) {
+    public void addOrder(String nameBuyer) throws ParseException {
         mercadoLibre.getOrders().add(new Order(nameBuyer));
     }
 
@@ -164,6 +146,8 @@ public class MLController {
             if (mercadoLibre.getProducts().get(pos).getAmount() >= amount) {
                 mercadoLibre.getProducts().get(pos)
                         .setAmount(mercadoLibre.getProducts().get(pos).getAmount() - amount);
+                mercadoLibre.getProducts().get(pos)
+                        .setNumberPurchases(mercadoLibre.getProducts().get(pos).getNumberPurchases() + amount);
                 mercadoLibre.getOrders().get(pos)
                         .addCouple(new CoupleOrderAmount(amount, mercadoLibre.getProducts().get(pos)));
                 return "Product Added to the Order correctly";
@@ -172,6 +156,248 @@ public class MLController {
             }
         }
         return "";
+    }
+
+    /**
+     * This function searches for products within a price range and returns them in
+     * either ascending or
+     * descending order based on their price.
+     * 
+     * @param max      The maximum price of the products to be searched.
+     * @param min      The minimum price value to search for products.
+     * @param minToMax A boolean value that determines whether the products should
+     *                 be sorted from
+     *                 minimum to maximum price (true) or from maximum to minimum
+     *                 price (false).
+     * @return The method is returning a String that contains the information of the
+     *         products that meet
+     *         the price range criteria, sorted either from lowest to highest price
+     *         or from highest to lowest
+     *         price, depending on the value of the boolean parameter "minToMax".
+     */
+    public String searchProductsByPrice(Double min, Double max, boolean minToMax) {
+        Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return Double.valueOf(p1.getPrice()).compareTo(Double.valueOf(p2.getPrice()));
+            }
+        });
+        Double[] arr = new Double[mercadoLibre.getProducts().size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = mercadoLibre.getProducts().get(i).getPrice();
+        }
+
+        String msj = "";
+
+        ArrayList<Integer> position = doubleSearcher.binarySearchByRange(arr, min, max);
+        if(position == null || position.isEmpty()){
+            return "There are not elements on this range";
+        }
+        if (minToMax) {
+            for (int index = 0; index < position.size(); index++) {
+                msj += "\n" + position.get(index) + ") "
+                        + mercadoLibre.getProducts().get(position.get(index)).toString();
+            }
+        } else {
+            for (int index = position.size()-1; index >= 0; index--) {
+                msj += "\n" + position.get(index) + ") "
+                        + mercadoLibre.getProducts().get(position.get(index)).toString();
+            }
+        }
+        return msj;
+    }
+
+    /**
+     * The function searches for products within a specified stock range and returns
+     * them in either
+     * ascending or descending order based on the boolean input.
+     * 
+     * @param max      The maximum amount of stock that the user wants to search
+     *                 for.
+     * @param min      The minimum amount of stock that a product should have to be
+     *                 included in the search.
+     * @param minToMax A boolean value that determines whether the search results
+     *                 should be sorted from
+     *                 minimum to maximum or from maximum to minimum. If it is true,
+     *                 the results will be sorted from
+     *                 minimum to maximum, and if it is false, the results will be
+     *                 sorted from maximum to minimum.
+     * @return The method is returning a String that contains the information of the
+     *         products that have
+     *         a stock amount within the specified range (min and max). The order of
+     *         the products in the
+     *         returned String depends on the value of the boolean parameter
+     *         minToMax. If it is true, the
+     *         products are sorted from the one with the lowest stock amount to the
+     *         one with the highest stock
+     *         amount. If it is false, the
+     */
+    public String searchProductByStock(int max, int min, boolean minToMax) {
+        Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return Integer.valueOf(p1.getAmount()).compareTo(Integer.valueOf(p2.getAmount()));
+            }
+        });
+        Integer[] arr = new Integer[mercadoLibre.getProducts().size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = mercadoLibre.getProducts().get(i).getAmount();
+        }
+
+        String msj = "";
+
+        ArrayList<Integer> position = integerSearcher.binarySearchByRange(arr, min, max);
+        if (minToMax) {
+            for (int index = 0; index < position.size(); index++) {
+                msj += "\n" + position.get(index) + ") "
+                        + mercadoLibre.getProducts().get(position.get(index)).toString();
+            }
+        } else {
+            for (int index = position.size()-1; index >= 0; index--) {
+                msj += "\n" + position.get(index) + ") "
+                        + mercadoLibre.getProducts().get(position.get(index)).toString();
+            }
+        }
+        return msj;
+    }
+
+    /**
+     * This Java function searches for products within a specified range of number
+     * of purchases and
+     * returns them in either ascending or descending order based on a boolean
+     * parameter.
+     * 
+     * @param max      The maximum number of purchases a product can have to be
+     *                 included in the search
+     *                 results.
+     * @param min      The minimum number of purchases a product must have to be
+     *                 included in the search.
+     * @param minToMax A boolean value that determines whether the search results
+     *                 should be sorted from
+     *                 minimum to maximum (true) or from maximum to minimum (false).
+     * @return The method is returning a String that contains the information of the
+     *         products that have
+     *         a number of purchases within a certain range, sorted either from
+     *         lowest to highest or from
+     *         highest to lowest, depending on the value of the boolean parameter
+     *         "minToMax".
+     */
+    public String searchProductBySells(int max, int min, boolean minToMax) {
+        Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return Integer.valueOf(p1.getNumberPurchases()).compareTo(Integer.valueOf(p2.getNumberPurchases()));
+            }
+        });
+        Integer[] arr = new Integer[mercadoLibre.getProducts().size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = mercadoLibre.getProducts().get(i).getNumberPurchases();
+        }
+
+        String msj = "";
+
+        ArrayList<Integer> position = integerSearcher.binarySearchByRange(arr, min, max);
+        if (minToMax) {
+            for (int index = 0; index < position.size(); index++) {
+                msj += "\n" + position.get(index) + ") "
+                        + mercadoLibre.getProducts().get(position.get(index)).toString();
+            }
+        } else {
+            for (int index = position.size(); index >= 0; index--) {
+                msj += "\n" + position.get(index) + ") "
+                        + mercadoLibre.getProducts().get(position.get(index)).toString();
+            }
+        }
+        return msj;
+    }
+
+    /**
+     * The function sorts a list of orders by price, searches for orders within a
+     * given price range,
+     * and returns a string representation of the orders in either ascending or
+     * descending order based
+     * on a boolean parameter.
+     * 
+     * @param max      The maximum price limit for the orders to be searched.
+     * @param min      The minimum price value to search for in the list of orders.
+     * @param minToMax A boolean value that determines whether the search results
+     *                 should be sorted from
+     *                 minimum to maximum price (true) or from maximum to minimum
+     *                 price (false).
+     * @return The method is returning a String that contains the orders within a
+     *         given price range,
+     *         sorted either from lowest to highest or from highest to lowest,
+     *         depending on the value of the
+     *         boolean parameter "minToMax".
+     */
+    public String searchOrderByPrice(Double max, Double min, boolean minToMax) {
+        Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
+            @Override
+            public int compare(Order p1, Order p2) {
+                return Double.valueOf(p1.getPrice()).compareTo(Double.valueOf(p2.getPrice()));
+            }
+        });
+        Double[] arr = new Double[mercadoLibre.getOrders().size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = mercadoLibre.getOrders().get(i).getPrice();
+        }
+
+        String msj = "";
+
+        ArrayList<Integer> position = doubleSearcher.binarySearchByRange(arr, min, max);
+        if (minToMax) {
+            for (int index = 0; index < position.size(); index++) {
+                msj += "\n" + position.get(index) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
+            }
+        } else {
+            for (int index = position.size(); index >= 0; index--) {
+                msj += "\n" + position.get(index) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
+            }
+        }
+        return msj;
+    }
+
+    /**
+     * The function sorts a list of orders by date, performs a binary search on the list based on a
+     * given range, and returns a string representation of the orders in either ascending or descending
+     * order.
+     * 
+     * @param max The maximum value to search for in the list of orders, based on the date in
+     * milliseconds.
+     * @param min The minimum value for the date range to search for orders.
+     * @param minToMax A boolean value that determines whether the search results should be sorted from
+     * minimum to maximum date or from maximum to minimum date. If it is true, the results will be
+     * sorted from minimum to maximum date, otherwise, they will be sorted from maximum to minimum
+     * date.
+     * @return The method is returning a String that contains information about the orders within a
+     * certain date range, sorted either from the earliest to the latest date or from the latest to the
+     * earliest date, depending on the value of the boolean parameter "minToMax".
+     */
+    public String searchOrderByDate(Double max, Double min, boolean minToMax) {
+        Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
+            @Override
+            public int compare(Order p1, Order p2) {
+                return Double.valueOf(p1.getDateFormatDate().getTime()).compareTo(Double.valueOf(p2.getDateFormatDate().getTime()));
+            }
+        });
+        Double[] arr = new Double[mercadoLibre.getOrders().size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (double) mercadoLibre.getOrders().get(i).getDateFormatDate().getTime();
+        }
+
+        String msj = "";
+
+        ArrayList<Integer> position = doubleSearcher.binarySearchByRange(arr, min, max);
+        if (minToMax) {
+            for (int index = 0; index < position.size(); index++) {
+                msj += "\n" + position.get(index) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
+            }
+        } else {
+            for (int index = position.size(); index >= 0; index--) {
+                msj += "\n" + position.get(index) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
+            }
+        }
+        return msj;
     }
 
     /**
@@ -198,9 +424,8 @@ public class MLController {
             arr[i] = mercadoLibre.getProducts().get(i).getName();
         }
         return stringSearcher.binarySearch(arr, product.toLowerCase());
-    }
 
-  
+    }
 
     /**
      * The function displays a list of products or a message indicating that the
@@ -214,7 +439,7 @@ public class MLController {
         String msj = "PRODUCTS LIST";
         if (!mercadoLibre.getProducts().isEmpty()) {
             for (int i = 0; i < mercadoLibre.getProducts().size(); i++) {
-                msj += "\n" + (i + 1) + ") " + mercadoLibre.getProducts().get(i).toString();
+                msj += "\n" + (i + 1) + ") " + mercadoLibre.getProducts().get(i).toString() + "\n";
             }
             return msj;
         } else {
@@ -240,6 +465,7 @@ public class MLController {
         } else {
             return "The orders list is Empty";
         }
+
     }
 
     /**
