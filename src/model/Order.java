@@ -14,6 +14,7 @@ public class Order {
     private String date;
     private Date dateFormatDate;
     
+    
     public Order(String nameBuyer) throws ParseException {
         this.nameBuyer = nameBuyer;
         this.products = new ArrayList<>();
@@ -26,7 +27,7 @@ public class Order {
         dateWithHour.clear(Calendar.MILLISECOND);
 
         SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy"); // Definiton of the format for date
-        this.date = formatedDate.format(dateFormatDate.getTime()); // Format the date
+        this.date = formatedDate.format(dateWithHour.getTime()); // Format the date
         this.dateFormatDate = formatedDate.parse(date);
     }
 

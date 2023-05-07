@@ -3,7 +3,9 @@
  */
 package ui;
 
+import java.util.Date;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 import exceptions.ObjectOutOfStock;
@@ -56,6 +58,7 @@ public class Main {
 
     /**
      * Description: Allows select the option of the main menu
+     * 
      * @throws ParseException
      *
      */
@@ -107,22 +110,21 @@ public class Main {
         } while (exit == false);
     }
 
-
     /**
      * Description: Allows select the option of the search Product
      *
      */
     public void searchProductMenu() {
-        if(controller.productsIsEmpty()){
+        if (controller.productsIsEmpty()) {
             System.out.println("There aren't products registered for search");
             return;
         }
         int optionMenu = 0;
-        
+
         boolean exit = false;
         do {
             System.out.println(
-                    "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu"+ 
+                    "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu" +
                             "\n 1) Search by name" +
                             "\n 2) Search by price" +
                             "\n 3) Search by category" +
@@ -130,7 +132,7 @@ public class Main {
                             "\n-------------------");
             optionMenu = validateIntegerOption();
             System.out.println("\n");
-            
+
             switch (optionMenu) {
                 case 0:
                     exit = true;
@@ -159,23 +161,23 @@ public class Main {
      *
      */
     public void searchOrderMenu() {
-        if(controller.orderIsEmpty()){
+        if (controller.orderIsEmpty()) {
             System.out.println("There aren't orders registered for search");
             return;
         }
-        int optionMenu=0;
-        
+        int optionMenu = 0;
+
         boolean exit = false;
         do {
             System.out.println(
-                    "----------\nSearch Order Menu\n---------- Choose a option:\n 0) Exit of Menu" + 
+                    "----------\nSearch Order Menu\n---------- Choose a option:\n 0) Exit of Menu" +
                             "\n 1) Search by buyer name" +
                             "\n 2) Search by price" +
                             "\n 3) Search by date" +
                             "\n-------------------");
             optionMenu = validateIntegerOption();
             System.out.println("\n");
-            
+
             switch (optionMenu) {
                 case 0:
                     exit = true;
@@ -187,7 +189,8 @@ public class Main {
                     searchOrderByTotalPrice();
                     break;
                 case 3:
-                    
+                    searchOrderByDate();
+
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -196,9 +199,9 @@ public class Main {
         } while (exit == false);
     }
 
-
     /**
-     * This function prompts the user to input information about a product and then adds it to a
+     * This function prompts the user to input information about a product and then
+     * adds it to a
      * controller object, handling any exceptions that may occur.
      */
     public void addProduct() {
@@ -227,8 +230,11 @@ public class Main {
     }
 
     /**
-     * This function adds an order by prompting the user to input the buyer's name, product name, and
-     * amount, and then adding the product to the order until the user chooses to finish.
+     * This function adds an order by prompting the user to input the buyer's name,
+     * product name, and
+     * amount, and then adding the product to the order until the user chooses to
+     * finish.
+     * 
      * @throws ParseException
      */
     public void addOrder() throws ParseException {
@@ -239,29 +245,14 @@ public class Main {
         System.out.println("\nWrite Buyer's name");
         String nameBuyer = reader.nextLine();
         controller.addOrder(nameBuyer);
-        while (finish == 0) {
-
-            System.out.println("Writte the name of the product");
-            //falta acomodar el buscar aquí ^
-
-
-
-            String product = reader.nextLine();
-            System.out.println("Write the Amount of this product");
-            int amount = validateIntegerOption();
-            try {
-                System.out.println(controller.addProductToOrder(amount, product));
-                System.out.println("If u wanna add another product write 0, if not write 1");
-                finish = validateIntegerOption();
-            } catch (ObjectOutOfStock e) {
-                System.out.println("\n" + e.getMessage());
-            }
-        }
+        
     }
 
-     /**
-     * This function prompts the user to enter a product name and a new amount for the product, and
-     * then calls a controller method to edit the amount of the product, handling any exceptions that
+    /**
+     * This function prompts the user to enter a product name and a new amount for
+     * the product, and
+     * then calls a controller method to edit the amount of the product, handling
+     * any exceptions that
      * may occur.
      */
     public void editAmountProduct() {
@@ -274,7 +265,7 @@ public class Main {
             System.out.println("\n" + controller.editAmountProduct(name, newAmount));
 
         } catch (ObjectWithInvalidAmount e) {
-            
+
             System.out.println("\n" + e.getMessage() + "\n");
 
         }
@@ -282,105 +273,138 @@ public class Main {
     }
 
     /**
-     * This function prompts the user to select whether they want to see a list from minimum to maximum
+     * This function prompts the user to select whether they want to see a list from
+     * minimum to maximum
      * or not, and returns a boolean value accordingly.
      * 
-     * @return A boolean value indicating whether the user wants to see the list from minimum to
-     * maximum (true) or not (false).
+     * @return A boolean value indicating whether the user wants to see the list
+     *         from minimum to
+     *         maximum (true) or not (false).
      */
-    public boolean minToMax(){
+    public boolean minToMax() {
         System.out.println("If you wanna see the list from minimum to maximum select 1, otherwise select 2");
-            int minOrMax= reader.nextInt();
-            while (minOrMax>2 || minOrMax<1) {
-                System.out.println("Write a valid option");
-                minOrMax = reader.nextInt();
-            }
-            boolean minToMax= false;
-            if(minOrMax==1){
-                minToMax=true;
-            }
-            return minToMax;
+        int minOrMax = reader.nextInt();
+        while (minOrMax > 2 || minOrMax < 1) {
+            System.out.println("Write a valid option");
+            minOrMax = reader.nextInt();
+        }
+        boolean minToMax = false;
+        if (minOrMax == 1) {
+            minToMax = true;
+        }
+        return minToMax;
     }
-    
-    public void searchProductByName(){
+
+    public void searchProductByName() {
         boolean option = prefixOrSuffix();
-        if(option){
+        if (option) {
             String[] minAndMax = rangeMinAndMaxString();
-            boolean minToMax= minToMax();
+            boolean minToMax = minToMax();
             System.out.println(controller.searchProducByName(minAndMax[0], minAndMax[1], minToMax));
-        } //Pendiente el else
-        
+        } // Pendiente el else
+
     }
 
     /**
-     * This function searches for products by price, either within a range or for an exact price.
+     * This function searches for products by price, either within a range or for an
+     * exact price.
      */
-    public void searchProductByPrice(){
+    public void searchProductByPrice() {
         boolean option = rangeOrExact();
-        if(option){
+        if (option) {
             double[] minAndMax = rangeMinAndMax();
-            boolean minToMax= minToMax();
+            boolean minToMax = minToMax();
             System.out.println(controller.searchProductsByPrice(minAndMax[0], minAndMax[1], minToMax));
-        }else{
+        } else {
             System.out.println("Write the price to search");
             double minAndMax = reader.nextDouble();
             System.out.println(controller.searchProductsByPrice(minAndMax, minAndMax, true));
         }
-    }  
+    }
 
     /**
-     * This function searches for products based on their sales, either within a range or an exact
+     * This function searches for products based on their sales, either within a
+     * range or an exact
      * number.
      */
-    public void searchProductBySells(){
+    public void searchProductBySells() {
         boolean option = rangeOrExact();
-        if(option){
+        if (option) {
             double[] minAndMax = rangeMinAndMax();
-            boolean minToMax= minToMax();
+            boolean minToMax = minToMax();
             System.out.println(controller.searchProductBySells((int) minAndMax[0], (int) minAndMax[1], minToMax));
-        }else{
+        } else {
             System.out.println("Write the number of purchases to search");
             int minAndMax = reader.nextInt();
             System.out.println(controller.searchProductBySells(minAndMax, minAndMax, true));
         }
-    }   
-    
+    }
+
     /**
      * This function searches for products by category and prints the results.
      */
-    public void searchProductByCategory(){
+    public void searchProductByCategory() {
         int minAndMax = selectCategory();
         System.out.println(controller.searchProductByCategory(minAndMax, minAndMax, true));
-    }   
-
-    public void searchOrderByBuyerName(){
-        boolean option = prefixOrSuffix();
-        if(option){
-            String[] minAndMax = rangeMinAndMaxString();
-            boolean minToMax= minToMax();
-            System.out.println(controller.searchOrderByBuyerName(minAndMax[0], minAndMax[1], minToMax));
-        } //Pendiente el else
-        
     }
 
-    public void searchOrderByTotalPrice(){
+    // The above code is a method in Java that is used to search for orders by the name of the buyer.
+    // However, the implementation of the method is not provided in the code snippet.
+    public void searchOrderByBuyerName() {
+        boolean option = prefixOrSuffix();
+        if (option) {
+            String[] minAndMax = rangeMinAndMaxString();
+            boolean minToMax = minToMax();
+            System.out.println(controller.searchOrderByBuyerName(minAndMax[0], minAndMax[1], minToMax));
+        } // Pendiente el else
+
+    }
+
+    // The above code is a method in Java that performs a search for orders by their total price. It is
+    // likely part of a larger program that manages orders and their associated prices.
+    public void searchOrderByTotalPrice() {
         boolean option = rangeOrExact();
-        if(option){
+        if (option) {
             double[] minAndMax = rangeMinAndMax();
-            boolean minToMax= minToMax();
+            boolean minToMax = minToMax();
             System.out.println(controller.searchOrderByTotalPrice(minAndMax[0], minAndMax[1], minToMax));
-        }else{
+        } else {
             System.out.println("Write the number of purchases to search");
             double minAndMax = reader.nextDouble();
             System.out.println(controller.searchOrderByTotalPrice(minAndMax, minAndMax, true));
         }
     }
 
-    public void searchOrderByDate(){
-       //Hagale pues flamini rata
+    // The above code is a method in Java that is likely part of a larger program. It is named
+    // `searchOrderByDate()` and its purpose is not clear from the code snippet alone. However, based
+    // on its name, it is likely that the method is searching for orders by date in some sort of system
+    // or database. Without more context, it is impossible to determine exactly how the method is
+    // implemented or what it does.
+    public void searchOrderByDate() {
+        boolean option = rangeOrExact();
+        if (option) {
+            Date[] minAndMax = rangeMinAndMaxDate();
+            boolean minToMax = minToMax();
+            System.out.println(controller.searchOrderByDate(minAndMax[0], minAndMax[1], minToMax));
+        } else {
+            boolean validDate = false;
+
+            while (!validDate) {
+                System.out.println("Enter the date to search (Format of date: dd/MM/yyyy): ");
+                String dateString = reader.nextLine();
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+                try {
+                    Date minAndMax = format.parse(dateString);
+                    validDate = true;
+                    System.out.println(controller.searchOrderByDate(minAndMax, minAndMax, true));
+                } catch (ParseException e) {
+                    System.out.println("Please write a valid date");
+                }
+            }
+        }
     }
-    
-    
+
     public boolean prefixOrSuffix() {
         int optionMenu = 0;
         boolean exit = false;
@@ -396,16 +420,18 @@ public class Main {
                 exit = true;
             }
         } while (!exit);
-        if(optionMenu==1){
+        if (optionMenu == 1) {
             return true;
         }
         return false;
     }
 
     /**
-     * This function prompts the user to select a product from a list and validates their input.
+     * This function prompts the user to select a product from a list and validates
+     * their input.
      * 
-     * @return The method is returning an integer value, which is the user's selected product.
+     * @return The method is returning an integer value, which is the user's
+     *         selected product.
      */
     public int selectProduct() {
         System.out.println(controller.showProducts());
@@ -421,9 +447,11 @@ public class Main {
     }
 
     /**
-     * This Java function prompts the user to select a category type and returns the selected category.
+     * This Java function prompts the user to select a category type and returns the
+     * selected category.
      * 
-     * @return The method is returning an integer value which represents the selected category.
+     * @return The method is returning an integer value which represents the
+     *         selected category.
      */
     public int selectCategory() {
         boolean exit = false;
@@ -443,11 +471,13 @@ public class Main {
     }
 
     /**
-     * This function prompts the user to choose between a range search or an exact search and returns a
+     * This function prompts the user to choose between a range search or an exact
+     * search and returns a
      * boolean value based on the user's choice.
      * 
-     * @return A boolean value indicating whether the user chose a range search (true) or an exact
-     * search (false).
+     * @return A boolean value indicating whether the user chose a range search
+     *         (true) or an exact
+     *         search (false).
      */
     public boolean rangeOrExact() {
         int optionMenu = 0;
@@ -464,20 +494,23 @@ public class Main {
                 exit = true;
             }
         } while (!exit);
-        if(optionMenu==1){
+        if (optionMenu == 1) {
             return true;
         }
         return false;
     }
 
     /**
-     * The function prompts the user to enter a range minimum and maximum, ensuring that the maximum is
-     * greater than or equal to the minimum, and returns an array containing these values.
+     * The function prompts the user to enter a range minimum and maximum, ensuring
+     * that the maximum is
+     * greater than or equal to the minimum, and returns an array containing these
+     * values.
      * 
-     * @return An array of two doubles, where the first element is the range minimum and the second
-     * element is the range maximum.
+     * @return An array of two doubles, where the first element is the range minimum
+     *         and the second
+     *         element is the range maximum.
      */
-    public double[] rangeMinAndMax(){
+    public double[] rangeMinAndMax() {
         double[] minAndMax = new double[2];
 
         System.out.println("Enter the range minimum to search: ");
@@ -495,7 +528,48 @@ public class Main {
         return minAndMax;
     }
 
-    public String[] rangeMinAndMaxString(){
+    // The above code is a method in Java that returns an array of Double objects. The method is named
+    // "rangeMinAndMaxDate" and it is likely used to calculate the minimum and maximum values of a
+    // range of dates. However, without seeing the implementation of the method, it is difficult to
+    // determine its exact purpose.
+    public Date[] rangeMinAndMaxDate() {
+        Date[] minAndMax = new Date[2];
+        reader.nextLine();
+        boolean validDate = false;
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+        while (!validDate) {
+            System.out.println("Enter the range minimum to search (Format of date: dd/MM/yyyy): ");
+            String dateString = reader.nextLine();
+            System.out.println("Enter the range maximum to search (Format of date: dd/MM/yyyy): ");
+            String dateString2 = reader.nextLine();
+
+            try {
+                minAndMax[0] = format.parse(dateString);
+                minAndMax[1] = format.parse(dateString2);
+                validDate = true;
+
+                while (minAndMax[1].compareTo(minAndMax[0]) < 0) {
+                    System.out.println("The range maximum must be bigger than the range minimum: ");
+                    dateString = reader.nextLine();
+                    minAndMax[1] = format.parse(dateString2);
+
+                }
+
+            } catch (ParseException e) {
+                System.out.println("Please write a valid date");
+            }
+        }
+
+     
+
+        return minAndMax;
+    }
+
+    // The above code is a method signature in Java that declares a method named `rangeMinAndMaxString`
+    // which returns an array of strings. However, the method body is not provided, so it is unclear
+    // what the method is intended to do.
+    public String[] rangeMinAndMaxString() {
         String[] minAndMax = new String[2];
         reader.nextLine();
         System.out.println("Enter the range minimum to search: ");
@@ -512,7 +586,6 @@ public class Main {
 
         return minAndMax;
     }
-
 
     /**
      * validateIntegerOption: This method checks if a number is an integer
@@ -533,38 +606,4 @@ public class Main {
         return option;
     }
 
-
-    /**
-     * import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Scanner;
-
-
-
-        
-        System.out.println("Insert the date (formato dd/MM/yyyy): ");
-        String fechaString = scanner.nextLine();
-
-        
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date fecha = null;
-
-        try {
-            // Utilizar el objeto SimpleDateFormat para convertir la cadena de entrada a un objeto Date
-            fecha = dateFormat.parse(fechaString);
-        } catch (ParseException e) {
-            System.out.println("The date entered is not in the correct format");
-            return;
-        }
-
-        // Imprimir la fecha obtenida
-        System.out.println("La fecha ingresada es: " + fecha);
-    }
-}
-
-     */
-
-    
-    
 }

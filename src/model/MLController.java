@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 import exceptions.*;
 
@@ -11,7 +12,7 @@ public class MLController {
     private Searcher<String> stringSearcher;
     private Searcher<Double> doubleSearcher;
     private Searcher<Integer> integerSearcher;
-
+    private Searcher<Date> dateSearcher;
     private MercadoLibre mercadoLibre;
     private ManagerPersistence managerPersistence;
 
@@ -19,6 +20,7 @@ public class MLController {
         stringSearcher = new Searcher<>();
         doubleSearcher = new Searcher<>();
         integerSearcher = new Searcher<>();
+        dateSearcher = new Searcher<>();
         mercadoLibre = MercadoLibre.getInstance();
         managerPersistence = new ManagerPersistence();
         openProgram();
@@ -150,16 +152,17 @@ public class MLController {
                         .setAmount(mercadoLibre.getProducts().get(pos).getAmount() - amount);
                 mercadoLibre.getProducts().get(pos)
                         .setNumberPurchases(mercadoLibre.getProducts().get(pos).getNumberPurchases() + amount);
-                mercadoLibre.getOrders().get(pos)
+                mercadoLibre.getOrders().get(0)
                         .addCouple(new CoupleOrderAmount(amount, mercadoLibre.getProducts().get(pos)));
                 return "Product Added to the Order correctly";
             } else {
                 throw new ObjectOutOfStock("The product is Out of Stock, select another one");
             }
         }else{
+            return "no se encontro";
             
         }
-        return "";
+    
     }
 
     
@@ -451,25 +454,26 @@ public class MLController {
      * certain date range, sorted either from the earliest to the latest date or from the latest to the
      * earliest date, depending on the value of the boolean parameter "minToMax".
      */
-    public String searchOrderByDate(Double min, Double max, boolean minToMax) {
+    public String searchOrderByDate(Date min, Date max, boolean minToMax) {
         Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
             @Override
             public int compare(Order p1, Order p2) {
-                return Double.valueOf(p1.getDateFormatDate().getTime()).compareTo(Double.valueOf(p2.getDateFormatDate().getTime()));
+                return p1.getDateFormatDate().compareTo(p2.getDateFormatDate());
             }
         });
-        Double[] arr = new Double[mercadoLibre.getOrders().size()];
+        
+        Date[] arr = new Date[mercadoLibre.getOrders().size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (double) mercadoLibre.getOrders().get(i).getDateFormatDate().getTime();
+            arr[i] = mercadoLibre.getOrders().get(i).getDateFormatDate();
         }
 
         String msj = "";
 
-        ArrayList<Integer> position = doubleSearcher.binarySearchByRange(arr, min, max);
+        ArrayList<Integer> position = dateSearcher.binarySearchByRange(arr, min, max);
         if(position == null || position.isEmpty()){
             return "There are not elements on this range";
         }
-        if (minToMax) {
+        if (minToMax) { 
             for (int index = 0; index < position.size(); index++) {
                 msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
             }
