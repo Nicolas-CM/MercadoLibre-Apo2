@@ -96,7 +96,16 @@ public class MLController {
      * @throws ParseException
      */
     public void addOrder(String nameBuyer) throws ParseException {
-        mercadoLibre.getOrders().add(new Order(nameBuyer));
+        mercadoLibre.getOrders().add(new Order(nameBuyer.toLowerCase()));
+    }
+
+    /**
+     * This function removes the last order from a list if it has no products.
+     */
+    public void verifyOrder() {
+        if (mercadoLibre.getOrders().get(mercadoLibre.getOrders().size() - 1).getProducts().isEmpty()) {
+            mercadoLibre.getOrders().remove(mercadoLibre.getOrders().size() - 1);
+        }
     }
 
     /**
@@ -113,18 +122,14 @@ public class MLController {
      *         amount is invalid, it
      *         throws an ObjectWithInvalidAmount exception.
      */
-    public String editAmountProduct(String name, int newAmount) throws ObjectWithInvalidAmount {
-        int pos = searchProductPosByName(name);
+    public String editAmountProduct(int position, int newAmount) throws ObjectWithInvalidAmount {
+
         if (newAmount < 0) {
             throw new ObjectWithInvalidAmount("Please write a valid amount (amount must be grater than or equal to 0)");
         }
-        if (searchProductPosByName(name) == -1) {
-            return "Product not found";
-        } else {
-            mercadoLibre.getProducts().get(pos).setAmount(newAmount);
-            return "The quantity of the product has been changed successfully";
 
-        }
+        mercadoLibre.getProducts().get(position - 1).setAmount(newAmount);
+        return "The quantity of the product has been changed successfully";
 
     }
 
@@ -143,25 +148,38 @@ public class MLController {
      *         of products, the method
      *         returns an empty string.
      */
-    public String addProductToOrder(int amount, String product) throws ObjectOutOfStock {
+    public String addProductToOrder(int amount, int product)
+            throws ObjectOutOfStock, ObjectWithInvalidAmount, ObjectDoesntExists {
 
-        int pos = searchProductPosByName(product.toLowerCase());
-        if (pos != -1) {
-            if (mercadoLibre.getProducts().get(pos).getAmount() >= amount) {
-                mercadoLibre.getProducts().get(pos)
-                        .setAmount(mercadoLibre.getProducts().get(pos).getAmount() - amount);
-                mercadoLibre.getProducts().get(pos)
-                        .setNumberPurchases(mercadoLibre.getProducts().get(pos).getNumberPurchases() + amount);
-                mercadoLibre.getOrders().get(0)
-                        .addCouple(new CoupleOrderAmount(amount, mercadoLibre.getProducts().get(pos)));
-                return "Product Added to the Order correctly";
-            } else {
+        if (product > productsLimit() || product < 1) {
+            throw new ObjectDoesntExists("The product selected doesn't exists, select another one");
+        } else if (mercadoLibre.getProducts().get(product - 1) != null) {
+            if (mercadoLibre.getProducts().get(product - 1).getAmount() >= amount) {
+                mercadoLibre.getProducts().get(product - 1)
+                        .setAmount(mercadoLibre.getProducts().get(product - 1).getAmount() - amount);
+                mercadoLibre.getProducts().get(product - 1)
+                        .setNumberPurchases(mercadoLibre.getProducts().get(product - 1).getNumberPurchases() + amount);
+                Product po = mercadoLibre.getProducts().get(product - 1);
+                try {
+                    Product pc = (Product) po.clone();
+                    CoupleOrderAmount couple = new CoupleOrderAmount(amount, pc);
+                    mercadoLibre.getOrders().get(mercadoLibre.getOrders().size() - 1)
+                            .addCouple(couple);
+                    mercadoLibre.getOrders().get(mercadoLibre.getOrders().size() - 1)
+                            .calculateOrderPrice(couple);
+                    return "Product Added to the Order correctly";
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+                return "";
+            } else if (mercadoLibre.getProducts().get(product - 1).getAmount() == 0) {
                 throw new ObjectOutOfStock("The product is Out of Stock, select another one");
+            } else {
+                throw new ObjectWithInvalidAmount(
+                        "The product has less units than written please enter other quantity");
             }
-        } else {
-            return "no se encontro";
-
         }
+        return "";
 
     }
 
@@ -186,21 +204,63 @@ public class MLController {
         return stringSearcher.binarySearch(arr, product.toLowerCase());
 
     }
-
-    public String searchProducByName(String min, String max, boolean minToMax) {
-        Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
-            @Override
-            public int compare(Product p1, Product p2) {
-                return String.valueOf(p1.getName()).compareTo(String.valueOf(p2.getName()));
-            }
-        });
+    public String searchExactProductByName(String min, String max, boolean minToMax) {
+        mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
         String[] arr = new String[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = mercadoLibre.getProducts().get(i).getName();
+            if(mercadoLibre.getProducts().get(i).getName().length()>=min.length()){
+                arr[i] = mercadoLibre.getProducts().get(i).getName().substring(0, min.length());
+            }else{
+                arr[i] = "";
+            }
         }
         ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
-
         return printInRange(position, minToMax, true);
+    }
+
+    public String searchProductByName(String min, String max, boolean minToMax, boolean preffix)
+            throws StringIndexOutOfBoundsException {
+        try {
+            if (preffix) {
+                mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
+                String[] arr = new String[mercadoLibre.getProducts().size()];
+                for (int i = 0; i < arr.length; i++) {
+                    arr[i] = mercadoLibre.getProducts().get(i).getName().substring(0, min.length()).toLowerCase();
+                }
+                String[] arr2 = new String[mercadoLibre.getProducts().size()];
+                for (int i = 0; i < arr2.length; i++) {
+                    arr2[i] = mercadoLibre.getProducts().get(i).getName().substring(0, max.length()).toLowerCase();
+                }
+                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+                return printInRange(position, minToMax, true);
+            } else {
+                final int lastIndex = max.length();
+                Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
+                    @Override
+                    public int compare(Product p1, Product p2) {
+                        String sufijo1 = p1.getName().substring(p1.getName().length() - lastIndex).toLowerCase();
+                        String sufijo2 = p2.getName().substring(p2.getName().length() - lastIndex).toLowerCase();
+                        return sufijo1.compareTo(sufijo2);
+                    }
+                });
+
+                String[] arr = new String[mercadoLibre.getProducts().size()];
+                for (int i = 0; i < arr.length; i++) {
+                    String temp = mercadoLibre.getProducts().get(i).getName().toLowerCase();
+                    arr[i] = temp.substring(temp.length() - min.length());
+                }
+                String[] arr2 = new String[mercadoLibre.getProducts().size()];
+                for (int i = 0; i < arr2.length; i++) {
+                    String temp = mercadoLibre.getProducts().get(i).getName().toLowerCase();
+                    arr2[i] = temp.substring(temp.length() - max.length());
+                }
+                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+                return printInRange(position, minToMax, true);
+            }
+        } catch (StringIndexOutOfBoundsException e) {
+            return "\nThere are some products that might have a lenght shother than the sufix or prefix\n";
+
+        }
     }
 
     /**
@@ -403,47 +463,85 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
-    /**
-     * This function searches for orders by buyer name within a given range and returns the results in
-     * a specified order.
-     * 
-     * @param min The minimum value to search for in the list of buyer names.
-     * @param max The maximum value for the range of buyer names to search for.
-     * @param minToMax A boolean value that determines whether the search results should be sorted in
-     * ascending order (true) or descending order (false).
-     * @return The method is returning a string that contains the orders within the range of buyer
-     * names specified by the "min" and "max" parameters, sorted in ascending or descending order based
-     * on the value of the "minToMax" parameter.
-     */
-    public String searchOrderByBuyerName(String min, String max, boolean minToMax) {
-        Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
-            @Override
-            public int compare(Order p1, Order p2) {
-                return String.valueOf(p1.getNameBuyer()).compareTo(String.valueOf(p2.getNameBuyer()));
-            }
-        });
+    public String searchExactOrderByBuyerName(String min, String max, boolean minToMax) {
+        mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
         String[] arr = new String[mercadoLibre.getOrders().size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer();
+            if(mercadoLibre.getOrders().get(i).getNameBuyer().length()>= min.length()){
+                arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, min.length()).toLowerCase();
+            }else{
+                arr[i] = "";
+            }
         }
         ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
-
         return printInRange(position, minToMax, false);
     }
 
+    public String searchOrderByBuyerName(String min, String max, boolean minToMax, boolean preffix)
+            throws StringIndexOutOfBoundsException {
+        try {
+            if (preffix) {
+                mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
+                String[] arr = new String[mercadoLibre.getOrders().size()];
+                for (int i = 0; i < arr.length; i++) {
+                    arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, min.length()).toLowerCase();
+                }
+                String[] arr2 = new String[mercadoLibre.getOrders().size()];
+                for (int i = 0; i < arr2.length; i++) {
+                    arr2[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, max.length()).toLowerCase();
+                }
+                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+                return printInRange(position, minToMax, false);
+            } else {
+                final int lastIndex = max.length();
+                Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
+                    @Override
+                    public int compare(Order p1, Order p2) {
+                        String sufijo1 = p1.getNameBuyer().substring(p1.getNameBuyer().length() - lastIndex);
+                        String sufijo2 = p2.getNameBuyer().substring(p2.getNameBuyer().length() - lastIndex);
+                        return sufijo1.compareTo(sufijo2);
+                    }
+                });
+
+                String[] arr = new String[mercadoLibre.getOrders().size()];
+                for (int i = 0; i < arr.length; i++) {
+                    String temp = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
+                    arr[i] = temp.substring(temp.length() - min.length());
+                }
+                String[] arr2 = new String[mercadoLibre.getOrders().size()];
+                for (int i = 0; i < arr2.length; i++) {
+                    String temp = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
+                    arr2[i] = temp.substring(temp.length() - max.length());
+                }
+                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+                return printInRange(position, minToMax, false);
+            }
+        } catch (StringIndexOutOfBoundsException e) {
+            return "\nThere are some orders that might have a lenght shother than the sufix or prefix\n";
+
+        }
+    }
+
     /**
-     * The function prints a range of elements from an ArrayList either in ascending or descending
+     * The function prints a range of elements from an ArrayList either in ascending
+     * or descending
      * order and either as products or orders.
      * 
-     * @param position An ArrayList of integers representing the positions of elements to be printed.
-     * @param minToMax A boolean value indicating whether the elements should be printed in ascending
-     * order (true) or descending order (false).
-     * @param isProduct isProduct is a boolean variable that determines whether the method should print
-     * products or orders. If isProduct is true, the method will print products, and if it is false,
-     * the method will print orders.
-     * @return The method is returning a String that contains a message with the elements within a
-     * given range of an ArrayList, either in ascending or descending order, and either as products or
-     * orders, depending on the parameters passed to the method.
+     * @param position  An ArrayList of integers representing the positions of
+     *                  elements to be printed.
+     * @param minToMax  A boolean value indicating whether the elements should be
+     *                  printed in ascending
+     *                  order (true) or descending order (false).
+     * @param isProduct isProduct is a boolean variable that determines whether the
+     *                  method should print
+     *                  products or orders. If isProduct is true, the method will
+     *                  print products, and if it is false,
+     *                  the method will print orders.
+     * @return The method is returning a String that contains a message with the
+     *         elements within a
+     *         given range of an ArrayList, either in ascending or descending order,
+     *         and either as products or
+     *         orders, depending on the parameters passed to the method.
      */
     public String printInRange(ArrayList<Integer> position, boolean minToMax, boolean isProduct) {
         StringBuilder msj = new StringBuilder();
@@ -578,6 +676,10 @@ public class MLController {
      */
     public boolean productsIsEmpty() {
         return (mercadoLibre.getProducts().isEmpty());
+    }
+
+    public int productsLimit() {
+        return mercadoLibre.getProducts().size();
     }
 
 }

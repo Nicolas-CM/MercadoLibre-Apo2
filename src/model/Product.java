@@ -1,6 +1,6 @@
 package model;
 
-public class Product  {
+public class Product implements Cloneable {
 
     private String name;
     private String description;
@@ -108,12 +108,17 @@ public class Product  {
     }
 
     @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
     // The `toString()` method is overriding the default implementation of the `toString()` method
     // provided by the `Object` class. It returns a string representation of the `Product` object,
     // including its name, description, price, actual stock, category, and number of times it has been
     // purchased. This method is often used for debugging and logging purposes.
     public String toString() {
-        return "Name: " + name + "\nDescription: " + description + "\nPrice: " + price + "\nActual stock: "+ amount + "\nCategory: " + category + "\nTimes purchased: " + numberPurchases+"\n";
+        return " Name: " + name + "\n Description: " + description + "\n Price: " + price + "\n Actual stock: "+ amount + "\n Category: " + category + "\n Times purchased: " + numberPurchases;
     }
 
 }

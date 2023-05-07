@@ -44,7 +44,7 @@ public class CoupleOrderAmount {
     // object, which includes the `Product` object's string representation and the amount of the order.
     // This method is often used for debugging and logging purposes.
     public String toString() {
-        return product.toString() + "Amount: " + amount;
+        return product.toString() + "\n Order Amount: " + amount;
     }
 
 }

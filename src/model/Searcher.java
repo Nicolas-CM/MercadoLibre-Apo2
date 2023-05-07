@@ -56,6 +56,31 @@ public class Searcher<K extends Comparable<K>> {
 		}
 	}
 
+	public ArrayList<Integer> binarySearchStringRange(K[] array, K[] array2, K first, K last) {
+		int firstTemp = binarySearchRange(array, first, true);
+		int lastTemp = binarySearchRange(array2, last, false);
+		if (firstTemp ==-2) {
+			firstTemp = -1;
+		}else if (firstTemp == -1) {
+			firstTemp = 0;
+		}
+		if(lastTemp == -1){
+			lastTemp = array.length-1;
+		}
+		if (lastTemp == -2) {
+			firstTemp = -1;
+		}
+		if (firstTemp != -1 ) {
+			ArrayList<Integer> newArrayList = new ArrayList<>();
+			for (int index = firstTemp; index <= lastTemp; index++) {
+				newArrayList.add(index);
+			}
+			return newArrayList;
+		}else{
+			return null;
+		}
+	}
+
 	/**
 	 * This is a Java function that performs binary search on an array to find the index of a target
 	 * value, and can optionally return the index of the first or last occurrence of the target value

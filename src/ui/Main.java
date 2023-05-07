@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
+import exceptions.ObjectDoesntExists;
 import exceptions.ObjectOutOfStock;
 import exceptions.ObjectWithInvalidAmount;
 import exceptions.ObjectWithSameName;
@@ -82,13 +83,13 @@ public class Main {
                     exit = true;
                     break;
                 case 1:
-                    addProduct();
+                    addProduct(); // Finish
                     break;
                 case 2:
-                    addOrder();
+                    addOrder(); // Finish
                     break;
                 case 3:
-                    editAmountProduct();
+                    editAmountProduct(); // Finish
                     break;
                 case 4:
                     System.out.println(controller.showProducts());
@@ -100,7 +101,7 @@ public class Main {
                     searchOrderMenu();
                     break;
                 case 7:
-                    searchProductMenu();
+                    searchProductMenu(false);
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -113,7 +114,7 @@ public class Main {
      * Description: Allows select the option of the search Product
      *
      */
-    public void searchProductMenu() {
+    public void searchProductMenu(boolean onePiece) {
         if (controller.productsIsEmpty()) {
             System.out.println("There aren't products registered for search");
             return;
@@ -137,19 +138,34 @@ public class Main {
                     exit = true;
                     break;
                 case 1:
-                    searchProductByName();
+                    searchProductByName(); //Finish
+                    if (onePiece) {
+                        return;
+                    }
                     break;
                 case 2:
                     searchProductByPrice(); // Numeric Finish
+                    if (onePiece) {
+                        return;
+                    }
                     break;
                 case 3:
                     searchProductByCategory(); // Category Finish
+                    if (onePiece) {
+                        return;
+                    }
                     break;
                 case 4:
                     searchProductBySells(); // Numeric Finish
+                    if (onePiece) {
+                        return;
+                    }
                     break;
                 case 5:
                     searchProductByAmount(); // Numeric Finish
+                    if (onePiece) {
+                        return;
+                    }
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -185,7 +201,7 @@ public class Main {
                     exit = true;
                     break;
                 case 1:
-                    searchOrderByBuyerName();
+                    searchOrderByBuyerName(); // Finish
                     break;
                 case 2:
                     searchOrderByTotalPrice(); // Numeric Finish
@@ -239,6 +255,10 @@ public class Main {
      * @throws ParseException
      */
     public void addOrder() throws ParseException {
+        if (controller.productsIsEmpty()) {
+            System.out.println("You can't register a Order, because there aren't products");
+            return;
+        }
         System.out.println(
                 "The offer will now be registered, the registration date will be automatically saved by the program.");
         int finish = 0;
@@ -246,7 +266,34 @@ public class Main {
         System.out.println("\nWrite Buyer's name");
         String nameBuyer = reader.nextLine();
         controller.addOrder(nameBuyer);
+        while (finish == 0) {
+            searchProductMenu(true);
+            System.out.println(
+                    "Please select one of the products, if there are no product that match your search type -1");
+            int product = reader.nextInt();
+            if (product == -1) {
+                System.out.println("If you want to add another product write 0, otherwise write 1");
+                finish = validateIntegerOption();
+                continue;
+            }
+            System.out.println("Please write the amount of products");
+            int amount = validateIntegerOption();
+            try {
+                System.out.println(controller.addProductToOrder(amount, product));
+                System.out.println("If you want to add another product write 0, otherwise write 1");
+                finish = validateIntegerOption();
+            } catch (ObjectOutOfStock e) {
+                System.out.println(e.getMessage());
 
+            } catch (ObjectWithInvalidAmount e) {
+                System.out.println(e.getMessage());
+
+            } catch (ObjectDoesntExists e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+        controller.verifyOrder();
     }
 
     /**
@@ -257,18 +304,24 @@ public class Main {
      * may occur.
      */
     public void editAmountProduct() {
-        reader.nextLine();
-        System.out.println("\nWrite the product name");
-        String name = reader.nextLine();
-        System.out.println("Write the new amount for the product");
-        int newAmount = reader.nextInt();
+        searchProductMenu(true);
+        System.out.println(
+                "Please select one of the products, if there are no product that match your search, type -1");
+        int product = reader.nextInt();
+        if (product == -1) {
+            return;
+        }
+        while (product < 1 || product > controller.productsLimit()) {
+            System.out.println("Write a valid number");
+            product = reader.nextInt();
+        }
         try {
-            System.out.println("\n" + controller.editAmountProduct(name, newAmount));
-
+            System.out.println("Write the new amount for the product");
+            int newAmount = validateIntegerOption();
+            System.out.println(controller.editAmountProduct(product, newAmount));
         } catch (ObjectWithInvalidAmount e) {
-
-            System.out.println("\n" + e.getMessage() + "\n");
-
+            System.out.println(e.getMessage());
+            editAmountProduct();
         }
 
     }
@@ -284,10 +337,10 @@ public class Main {
      */
     public boolean minToMax() {
         System.out.println("If you wanna see the list from minimum to maximum select 1, otherwise select 2");
-        int minOrMax = reader.nextInt();
+        int minOrMax = validateIntegerOption();
         while (minOrMax > 2 || minOrMax < 1) {
             System.out.println("Write a valid option");
-            minOrMax = reader.nextInt();
+            minOrMax = validateIntegerOption();
         }
         boolean minToMax = false;
         if (minOrMax == 1) {
@@ -300,12 +353,27 @@ public class Main {
      * This Java function searches for a product by name based on user input.
      */
     public void searchProductByName() {
-        boolean option = prefixOrSuffix();
-        if (option) {
-            String[] minAndMax = rangeMinAndMaxString();
-            boolean minToMax = minToMax();
-            System.out.println(controller.searchProducByName(minAndMax[0], minAndMax[1], minToMax));
-        } // Pendiente el else
+        int option = prefixOrSuffix();
+        if(option==3){
+            System.out.println("Write the Product name");
+            reader.nextLine();
+            String s= reader.nextLine();
+            System.out.println(controller.searchExactProductByName(s.toLowerCase(), s.toLowerCase(), true));
+            return;
+        }
+        String[] minAndMax = rangeMinAndMaxString(true);
+        if (option==2) {
+            while (minAndMax[0].length() != minAndMax[1].length()) {
+                if (minAndMax[0].length() != minAndMax[1].length()) {
+                    System.out.println("\nThe suffix must be the same size");
+                    minAndMax = rangeMinAndMaxString(false);
+                }
+            }
+
+        }
+        boolean minToMax = minToMax();
+
+        System.out.println(controller.searchProductByName(minAndMax[0].toLowerCase(), minAndMax[1].toLowerCase(), minToMax, true));
 
     }
 
@@ -374,12 +442,27 @@ public class Main {
      * This Java function searches for orders by buyer name based on user input.
      */
     public void searchOrderByBuyerName() {
-        boolean option = prefixOrSuffix();
-        if (option) {
-            String[] minAndMax = rangeMinAndMaxString();
-            boolean minToMax = minToMax();
-            System.out.println(controller.searchOrderByBuyerName(minAndMax[0], minAndMax[1], minToMax));
-        } // Pendiente el else
+        int option = prefixOrSuffix();
+        if(option==3){
+            reader.nextLine();
+            System.out.println("Write the Buyer name");
+            String s= reader.nextLine();
+            System.out.println(controller.searchExactOrderByBuyerName(s.toLowerCase(), s.toLowerCase(), true));
+            return;
+        }
+        String[] minAndMax = rangeMinAndMaxString(true);
+        if (option==2) {
+            while (minAndMax[0].length() != minAndMax[1].length()) {
+                if (minAndMax[0].length() != minAndMax[1].length()) {
+                    System.out.println("\nThe suffix must be the same size");
+                    minAndMax = rangeMinAndMaxString(false);
+                }
+            }
+
+        }
+        boolean minToMax = minToMax();
+
+        System.out.println(controller.searchOrderByBuyerName(minAndMax[0].toLowerCase(), minAndMax[1].toLowerCase(), minToMax, true));
 
     }
 
@@ -438,25 +521,23 @@ public class Main {
      *         the prefix search
      *         option and false if the user selects the suffix search option.
      */
-    public boolean prefixOrSuffix() {
+    public int prefixOrSuffix() {
         int optionMenu = 0;
         boolean exit = false;
         System.out.println(
                 "\n----------\nType of search\n---------- Choose a option:\n 1) Prefix Search" +
                         "\n 2) Suffix Search " +
+                        "\n 3) Exact Coincidence"+
                         "\n-------------------");
         do {
             optionMenu = validateIntegerOption();
-            if (optionMenu < 1 || optionMenu > 2) {
+            if (optionMenu < 1 || optionMenu > 3) {
                 System.out.println("This isn't a valid option, please select another one: ");
             } else {
                 exit = true;
             }
         } while (!exit);
-        if (optionMenu == 1) {
-            return true;
-        }
-        return false;
+        return optionMenu;
     }
 
     /**
@@ -618,16 +699,20 @@ public class Main {
      *         and maximum values
      *         entered by the user.
      */
-    public String[] rangeMinAndMaxString() {
+    public String[] rangeMinAndMaxString(boolean recharge) {
         String[] minAndMax = new String[2];
-        reader.nextLine();
-        System.out.println("Enter the range minimum to search: ");
-        minAndMax[0] = reader.nextLine();
+        if (recharge) {
+            reader.nextLine();
+            System.out.println("Enter the range minimum to search: ");
+        } else {
+            System.out.println("Enter the range minimum to search: ");
+        }
+        minAndMax[0] = reader.nextLine().toLowerCase();
         minAndMax[1] = "";
 
         System.out.println("Enter the range maximum to search: ");
         while (minAndMax[1].compareTo(minAndMax[0]) < 0) {
-            minAndMax[1] = reader.nextLine();
+            minAndMax[1] = reader.nextLine().toLowerCase();
             if (minAndMax[1].compareTo(minAndMax[0]) < 0) {
                 System.out.println("The range maximum must be bigger than the range minimum: ");
             }

@@ -35,10 +35,8 @@ public class Order {
      * This function calculates the total price of an order by multiplying the price of each product by
      * its corresponding amount and summing them up.
      */
-    public void calculateOrderPrice(){
-        for (CoupleOrderAmount couple : products) {
-            this.price += couple.getProduct().getPrice() * couple.getAmount();
-        }
+    public void calculateOrderPrice(CoupleOrderAmount couple){
+        this.price += couple.getProduct().getPrice() * couple.getAmount();
     }
 
     /**
@@ -117,16 +115,16 @@ public class Order {
      * If the list is empty, it returns a message indicating that the order list is empty.
      */
     public String showProducts() {
-        String msj = "\nPRODUCTS OF THE ORDER";
+        String msj = "\nORDER PRODUCTS OF " + nameBuyer.toUpperCase();
 ;        if (!products.isEmpty()) {
             for (int i = 0; i < products.size(); i++) {
-                msj += "\n" + (i + 1) + ") " + products.get(i).toString();
+                msj += "\n"+ products.get(i).toString() + "\n";
             }
             return msj;
         } else {
-            return "\nThe order list is Empty";
+            return "\nThe order list is Empty\n";
 
-                   }
+        }
     }
 
     @Override
