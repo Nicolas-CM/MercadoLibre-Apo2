@@ -1,6 +1,10 @@
 package exceptions;
 
 
+/**
+ * The class ObjectWithInvalidAmount is a custom exception that represents an object with an invalid
+ * amount.
+ */
 public class ObjectWithInvalidAmount extends Exception{
     private String msj;
 

@@ -22,10 +22,11 @@ public class ManagerPersistence {
         gson = new Gson();
     }
 
+    
     /**
-     * Guarda un arraylist de orders a Json
+     * The function saves an ArrayList of Order objects as a JSON file.
      * 
-     * @param orders El arraylist que se guardara
+     * @param orders An ArrayList of Order objects that need to be saved to a JSON file.
      */
     public void saveOrders(ArrayList<Order> orders) {
 
@@ -43,10 +44,11 @@ public class ManagerPersistence {
         }
     }
 
+    
     /**
-     * Guarda un arraylist de products a Json
+     * The function saves an ArrayList of Product objects to a JSON file.
      * 
-     * @param products El arraylist que se guardara
+     * @param products An ArrayList of Product objects that needs to be saved to a JSON file.
      */
     public void saveProducts(ArrayList<Product> products) {
 
@@ -64,6 +66,7 @@ public class ManagerPersistence {
         }
     }
 
+    
     /**
      * This function loads orders from a JSON file and returns them as an ArrayList.
      * 
@@ -92,8 +95,10 @@ public class ManagerPersistence {
         return orders;
     }
 
+    
     /**
-     * This function loads product data from a JSON file and returns an ArrayList of Product objects.
+     * This function loads a list of products from a JSON file and returns an ArrayList of Product
+     * objects.
      * 
      * @return An ArrayList of Product objects is being returned.
      */

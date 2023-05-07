@@ -1,6 +1,10 @@
 package exceptions;
 
 
+/**
+ * The class "ObjectWithSameName" extends the Exception class and has a constructor that takes a
+ * message as a parameter.
+ */
 public class ObjectWithSameName extends Exception{
     private String msj;
 

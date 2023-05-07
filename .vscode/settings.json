@@ -6,5 +6,6 @@
     "java.debug.settings.onBuildFailureProceed": true,
     "docwriter.progress.trackClasses": false,
     "docwriter.progress.trackFunctions": true,
-    "docwriter.progress.trackMethods": true
+    "docwriter.progress.trackMethods": true,
+    "docwriter.style": "Javadoc"
 }

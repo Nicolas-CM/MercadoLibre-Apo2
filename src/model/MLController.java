@@ -42,32 +42,25 @@ public class MLController {
         managerPersistence.saveProducts(mercadoLibre.getProducts());
     }
 
+    
+    
     /**
-     * The function adds a new product to a marketplace and checks for duplicate
-     * names and invalid
+     * This function adds a new product to a marketplace and checks for duplicate names and invalid
      * amounts.
      * 
-     * @param name        The name of the product being added (as a String).
+     * @param name The name of the product being added (as a String).
      * @param description A String that describes the product being added.
-     * @param price       The price of the product being added, represented as a
-     *                    double data type.
-     * @param amount      The amount parameter refers to the quantity of the product
-     *                    being added to the
-     *                    inventory. It should be a non-negative integer value.
-     * @param category    The category parameter is an integer that represents the
-     *                    category of the product
-     *                    being added. The specific categories and their
-     *                    corresponding integer values are likely defined
-     *                    elsewhere in the code.
-     * @return The method is returning a String message indicating whether the
-     *         product was added
-     *         correctly or not. If the product was added correctly, the message
-     *         will be "Product Added
-     *         Correctly". If there is another product with the same name, the
-     *         message will be "There is
-     *         another product with the same name, please write another name for the
-     *         product". If the amount is
-     *         invalid, the message will be "Please write a
+     * @param price A double value representing the price of the product.
+     * @param amount The amount parameter represents the quantity of the product being added to the
+     * inventory.
+     * @param category The category parameter is an integer that represents the category of the product
+     * being added. The specific categories and their corresponding integer values are defined
+     * elsewhere in the code.
+     * @return The method is returning a String message. If the product is added correctly, it returns
+     * "Product Added Correctly". If there is another product with the same name, it throws an
+     * exception with the message "There is another product with the same name, please write another
+     * name for the product". If the amount is invalid, it throws an exception with the message "Please
+     * write a valid amount (amount must
      */
     public String addProduct(String name, String description, double price, int amount, int category)
             throws ObjectWithSameName, ObjectWithInvalidAmount {
@@ -108,19 +101,15 @@ public class MLController {
         }
     }
 
+    
     /**
-     * This Java function edits the amount of a product in a marketplace and throws
-     * an exception if the
+     * This Java function edits the amount of a product in a marketplace and throws an exception if the
      * new amount is invalid.
      * 
-     * @param name      A String representing the name of the product to be edited.
-     * @param newAmount an integer representing the new amount of a product to be
-     *                  edited.
-     * @return The method returns a String message indicating whether the quantity
-     *         of a product has
-     *         been changed successfully or if the product was not found. If the new
-     *         amount is invalid, it
-     *         throws an ObjectWithInvalidAmount exception.
+     * @param position The position of the product in the list of products (starting from 1).
+     * @param newAmount An integer representing the new amount of a product.
+     * @return The method is returning a String message indicating that the quantity of the product has
+     * been changed successfully.
      */
     public String editAmountProduct(int position, int newAmount) throws ObjectWithInvalidAmount {
 
@@ -133,20 +122,17 @@ public class MLController {
 
     }
 
+    
     /**
-     * This Java function adds a specified amount of a product to an order, checking
-     * if it is in stock
-     * and throwing an exception if it is not.
+     * This Java function adds a product to an order, updating the product's amount and number of
+     * purchases, and throws exceptions if the product doesn't exist, is out of stock, or has an
+     * invalid amount.
      * 
-     * @param amount  The amount of the product to be added to the order.
-     * @param product The name of the product to be added to the order.
-     * @return If the product is added to the order correctly, the method returns
-     *         the string "Product
-     *         Added to the Order correctly". If the product is out of stock, the
-     *         method throws an
-     *         ObjectOutOfStock exception. If the product is not found in the list
-     *         of products, the method
-     *         returns an empty string.
+     * @param amount The amount of the product that the user wants to add to the order.
+     * @param product The ID of the product being added to the order.
+     * @return The method returns a String message indicating whether the product was added to the
+     * order correctly or if there was an error (ObjectOutOfStock, ObjectWithInvalidAmount,
+     * ObjectDoesntExists).
      */
     public String addProductToOrder(int amount, int product)
             throws ObjectOutOfStock, ObjectWithInvalidAmount, ObjectDoesntExists {
@@ -154,7 +140,10 @@ public class MLController {
         if (product > productsLimit() || product < 1) {
             throw new ObjectDoesntExists("The product selected doesn't exists, select another one");
         } else if (mercadoLibre.getProducts().get(product - 1) != null) {
-            if (mercadoLibre.getProducts().get(product - 1).getAmount() >= amount) {
+            
+            if (mercadoLibre.getProducts().get(product - 1).getAmount() == 0) {
+                throw new ObjectOutOfStock("The product is Out of Stock, select another one");
+            }else if (mercadoLibre.getProducts().get(product - 1).getAmount() >= amount) {
                 mercadoLibre.getProducts().get(product - 1)
                         .setAmount(mercadoLibre.getProducts().get(product - 1).getAmount() - amount);
                 mercadoLibre.getProducts().get(product - 1)
@@ -171,10 +160,8 @@ public class MLController {
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
-                return "";
-            } else if (mercadoLibre.getProducts().get(product - 1).getAmount() == 0) {
-                throw new ObjectOutOfStock("The product is Out of Stock, select another one");
-            } else {
+                return ""; 
+            }else {
                 throw new ObjectWithInvalidAmount(
                         "The product has less units than written please enter other quantity");
             }
@@ -204,6 +191,20 @@ public class MLController {
         return stringSearcher.binarySearch(arr, product.toLowerCase());
 
     }
+    /**
+     * The function searches for products with names within a specified range and returns a formatted
+     * string of the results.
+     * 
+     * @param min The minimum string value to search for in the product names.
+     * @param max The maximum value to search for in the range. It is used in the binary search
+     * algorithm to find the upper bound of the range.
+     * @param minToMax A boolean value indicating whether the search should be performed from the
+     * minimum value to the maximum value (true) or from the maximum value to the minimum value
+     * (false).
+     * @return The method is returning a string that contains the products whose names fall within the
+     * specified range, sorted either from minimum to maximum or from maximum to minimum, depending on
+     * the value of the boolean parameter `minToMax`.
+     */
     public String searchExactProductByName(String min, String max, boolean minToMax) {
         mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
         String[] arr = new String[mercadoLibre.getProducts().size()];
@@ -218,6 +219,24 @@ public class MLController {
         return printInRange(position, minToMax, true);
     }
 
+    /**
+     * This function searches for products within a given range of names, either by prefix or suffix,
+     * and returns the results in a specified order.
+     * 
+     * @param min A string representing the minimum value to search for in the product names.
+     * @param max The maximum string value to search for in the product names.
+     * @param minToMax A boolean value indicating whether the search should be performed from the
+     * minimum value to the maximum value (true) or from the maximum value to the minimum value
+     * (false).
+     * @param preffix A boolean value indicating whether the search should be based on the prefix of
+     * the product name or the suffix. If true, the search will be based on the prefix; if false, it
+     * will be based on the suffix.
+     * @return The method is returning a String that represents the result of a search for products
+     * within a certain range of names, based on the parameters passed to the method. The returned
+     * String contains information about the products found within the range, including their names and
+     * prices. If there is an exception thrown due to a StringIndexOutOfBoundsException, the method
+     * returns a message indicating that there may be products with a length shorter than the
+     */
     public String searchProductByName(String min, String max, boolean minToMax, boolean preffix)
             throws StringIndexOutOfBoundsException {
         try {
@@ -423,29 +442,16 @@ public class MLController {
     }
 
     /**
-     * The function sorts a list of orders by date, performs a binary search on the
-     * list based on a
-     * given range, and returns a string representation of the orders in either
-     * ascending or descending
-     * order.
+     * The function searches for orders within a given date range and returns them in either ascending
+     * or descending order.
      * 
-     * @param max      The maximum value to search for in the list of orders, based
-     *                 on the date in
-     *                 milliseconds.
-     * @param min      The minimum value for the date range to search for orders.
-     * @param minToMax A boolean value that determines whether the search results
-     *                 should be sorted from
-     *                 minimum to maximum date or from maximum to minimum date. If
-     *                 it is true, the results will be
-     *                 sorted from minimum to maximum date, otherwise, they will be
-     *                 sorted from maximum to minimum
-     *                 date.
-     * @return The method is returning a String that contains information about the
-     *         orders within a
-     *         certain date range, sorted either from the earliest to the latest
-     *         date or from the latest to the
-     *         earliest date, depending on the value of the boolean parameter
-     *         "minToMax".
+     * @param min The minimum date to search for orders.
+     * @param max The maximum date to search for orders.
+     * @param minToMax A boolean value that determines whether the search results should be sorted in
+     * ascending order (true) or descending order (false) based on the order date.
+     * @return The method is returning a string that contains the orders within the specified date
+     * range, sorted either from earliest to latest or from latest to earliest, depending on the value
+     * of the boolean parameter `minToMax`.
      */
     public String searchOrderByDate(Date min, Date max, boolean minToMax) {
         Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
@@ -463,6 +469,21 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
+    
+    /**
+     * The function searches for orders in a list by the buyer's name within a specified range and
+     * returns the results in a specific order.
+     * 
+     * @param min The minimum value to search for in the buyer name.
+     * @param max The maximum value to search for in the range of buyer names.
+     * @param minToMax A boolean value that determines whether the search results should be sorted in
+     * ascending order (true) or descending order (false) based on the buyer name.
+     * @return The method is returning a string that contains the result of searching for orders with
+     * buyer names that fall within a certain range, specified by the "min" and "max" parameters. The
+     * search is performed on a list of orders stored in the "mercadoLibre" object. The search results
+     * are sorted based on the buyer name, and the method returns a formatted string that contains the
+     * order information for
+     */
     public String searchExactOrderByBuyerName(String min, String max, boolean minToMax) {
         mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
         String[] arr = new String[mercadoLibre.getOrders().size()];
@@ -477,6 +498,23 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
+    
+    /**
+     * This function searches for orders by buyer name within a given range, either by prefix or
+     * suffix, and returns the results in a specified order.
+     * 
+     * @param min A string representing the minimum value to search for in the buyer name.
+     * @param max The maximum string value to search for in the buyer name.
+     * @param minToMax A boolean value indicating whether the search results should be sorted from
+     * minimum to maximum (true) or from maximum to minimum (false).
+     * @param preffix A boolean value indicating whether the search should be based on the prefix
+     * (true) or suffix (false) of the buyer name.
+     * @return The method is returning a String that represents the result of a search for orders in a
+     * given range of buyer names, based on certain criteria such as prefix or suffix, and sorted in
+     * ascending or descending order. The returned String contains information about the orders found,
+     * including their buyer names, order IDs, and purchase dates. If there is an exception due to a
+     * StringIndexOutOfBoundsException, the method returns a message
+     */
     public String searchOrderByBuyerName(String min, String max, boolean minToMax, boolean preffix)
             throws StringIndexOutOfBoundsException {
         try {
@@ -522,26 +560,22 @@ public class MLController {
         }
     }
 
+    
     /**
-     * The function prints a range of elements from an ArrayList either in ascending
-     * or descending
-     * order and either as products or orders.
+     * This function takes in an ArrayList of integers representing positions, a boolean indicating
+     * whether to print in ascending or descending order, and a boolean indicating whether to print
+     * products or orders, and returns a string containing the corresponding products or orders in the
+     * specified order.
      * 
-     * @param position  An ArrayList of integers representing the positions of
-     *                  elements to be printed.
-     * @param minToMax  A boolean value indicating whether the elements should be
-     *                  printed in ascending
-     *                  order (true) or descending order (false).
-     * @param isProduct isProduct is a boolean variable that determines whether the
-     *                  method should print
-     *                  products or orders. If isProduct is true, the method will
-     *                  print products, and if it is false,
-     *                  the method will print orders.
-     * @return The method is returning a String that contains a message with the
-     *         elements within a
-     *         given range of an ArrayList, either in ascending or descending order,
-     *         and either as products or
-     *         orders, depending on the parameters passed to the method.
+     * @param position An ArrayList of integers representing the positions of elements to be printed.
+     * @param minToMax A boolean value indicating whether the elements should be printed in ascending
+     * order (true) or descending order (false).
+     * @param isProduct A boolean value indicating whether the elements in the ArrayList are products
+     * or orders. If true, the method will print information about products. If false, it will print
+     * information about orders.
+     * @return The method is returning a String that contains a message with the elements within a
+     * given range of an ArrayList, either in ascending or descending order, and either as products or
+     * orders, depending on the parameters passed to the method.
      */
     public String printInRange(ArrayList<Integer> position, boolean minToMax, boolean isProduct) {
         StringBuilder msj = new StringBuilder();
@@ -571,13 +605,12 @@ public class MLController {
         return msj.toString();
     }
 
+    
     /**
-     * The function displays a list of products or a message indicating that the
-     * list is empty.
+     * The function displays a list of products or a message indicating that the list is empty.
      * 
-     * @return The method `showProducts()` returns a string that contains either the
-     *         list of products
-     *         or a message indicating that the list is empty.
+     * @return The method `showProducts` returns a String that represents either the list of products
+     * or a message indicating that the list is empty.
      */
     public String showProducts() {
         StringBuilder msj = new StringBuilder("PRODUCTS LIST");
@@ -591,13 +624,13 @@ public class MLController {
         }
     }
 
+    
     /**
-     * The function displays a list of orders or a message indicating that the list
-     * is empty.
+     * The function returns a string representation of the orders list, or a message indicating that
+     * the list is empty.
      * 
-     * @return The method is returning a String that represents either the list of
-     *         orders or a message
-     *         indicating that the list is empty.
+     * @return The method `showOrders` returns a String that represents either the list of orders or a
+     * message indicating that the list is empty.
      */
     public String showOrders() {
         StringBuilder msj = new StringBuilder("ORDERS LIST");
@@ -678,6 +711,12 @@ public class MLController {
         return (mercadoLibre.getProducts().isEmpty());
     }
 
+    /**
+     * This function returns the number of products in a MercadoLibre object.
+     * 
+     * @return The method `productsLimit()` is returning the size of the list of products in the
+     * `mercadoLibre` object.
+     */
     public int productsLimit() {
         return mercadoLibre.getProducts().size();
     }

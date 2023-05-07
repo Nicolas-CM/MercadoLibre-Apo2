@@ -216,10 +216,10 @@ public class Main {
         } while (exit == false);
     }
 
+    
     /**
-     * This function prompts the user to input information about a product and then
-     * adds it to a
-     * controller object, handling any exceptions that may occur.
+     * This function prompts the user to input information about a product and then adds it to a list
+     * of products, handling any errors that may occur.
      */
     public void addProduct() {
         reader.nextLine();
@@ -246,13 +246,10 @@ public class Main {
         }
     }
 
+    
     /**
-     * This function adds an order by prompting the user to input the buyer's name,
-     * product name, and
-     * amount, and then adding the product to the order until the user chooses to
-     * finish.
-     * 
-     * @throws ParseException
+     * This function adds an order to the system, allowing the user to select products and their
+     * respective amounts to be added to the order.
      */
     public void addOrder() throws ParseException {
         if (controller.productsIsEmpty()) {
@@ -296,12 +293,10 @@ public class Main {
         controller.verifyOrder();
     }
 
+    
     /**
-     * This function prompts the user to enter a product name and a new amount for
-     * the product, and
-     * then calls a controller method to edit the amount of the product, handling
-     * any exceptions that
-     * may occur.
+     * This function allows the user to edit the amount of a product in a system by selecting the
+     * product and entering a new amount.
      */
     public void editAmountProduct() {
         searchProductMenu(true);
@@ -326,14 +321,13 @@ public class Main {
 
     }
 
+    
     /**
-     * This function prompts the user to select whether they want to see a list from
-     * minimum to maximum
-     * or not, and returns a boolean value accordingly.
+     * The function prompts the user to select whether they want to see a list from minimum to maximum
+     * and returns a boolean value indicating the user's choice.
      * 
-     * @return A boolean value indicating whether the user wants to see the list
-     *         from minimum to
-     *         maximum (true) or not (false).
+     * @return A boolean value indicating whether the user wants to see the list from minimum to
+     * maximum (true) or not (false).
      */
     public boolean minToMax() {
         System.out.println("If you wanna see the list from minimum to maximum select 1, otherwise select 2");
@@ -349,8 +343,9 @@ public class Main {
         return minToMax;
     }
 
+    
     /**
-     * This Java function searches for a product by name based on user input.
+     * This function searches for a product by name, with options for exact match or range search.
      */
     public void searchProductByName() {
         int option = prefixOrSuffix();
@@ -377,9 +372,9 @@ public class Main {
 
     }
 
+    
     /**
-     * This function searches for products by price, either within a range or for an
-     * exact price.
+     * This function searches for products by price, either within a range or for an exact price.
      */
     public void searchProductByPrice() {
         boolean option = rangeOrExact();
@@ -394,9 +389,9 @@ public class Main {
         }
     }
 
+   
     /**
-     * This function searches for products based on their sales, either within a
-     * range or an exact
+     * This function searches for products based on their sales, either within a range or an exact
      * number.
      */
     public void searchProductBySells() {
@@ -412,9 +407,9 @@ public class Main {
         }
     }
 
+    
     /**
-     * This function searches for products based on their stock amount, either
-     * within a range or an
+     * This function searches for products based on their stock amount, either within a range or an
      * exact amount.
      */
     public void searchProductByAmount() {
@@ -430,16 +425,19 @@ public class Main {
         }
     }
 
+    
     /**
-     * This function searches for products by category and prints the results.
+     * This Java function searches for a product by category and prints the results.
      */
     public void searchProductByCategory() {
         int minAndMax = selectCategory();
         System.out.println(controller.searchProductByCategory(minAndMax, minAndMax, true));
     }
 
+    
     /**
-     * This Java function searches for orders by buyer name based on user input.
+     * This Java function searches for orders by buyer name, either exact match or within a specified
+     * range.
      */
     public void searchOrderByBuyerName() {
         int option = prefixOrSuffix();
@@ -466,8 +464,9 @@ public class Main {
 
     }
 
+    
     /**
-     * This function searches for orders by total price based on user input.
+     * This Java function searches for orders by total price based on user input.
      */
     public void searchOrderByTotalPrice() {
         boolean option = rangeOrExact();
@@ -482,9 +481,9 @@ public class Main {
         }
     }
 
+    
     /**
-     * This Java function searches for orders by date, either within a range or for
-     * a specific date.
+     * This Java function searches for orders by date, either within a range or for an exact date.
      */
     public void searchOrderByDate() {
         boolean option = rangeOrExact();
@@ -512,14 +511,13 @@ public class Main {
         }
     }
 
+     
     /**
-     * This function prompts the user to choose between a prefix or suffix search
-     * and returns a boolean
-     * value based on the user's choice.
+     * This function displays a menu for selecting a type of search (prefix, suffix, or exact
+     * coincidence) and validates the user's input.
      * 
-     * @return A boolean value is being returned, which is true if the user selects
-     *         the prefix search
-     *         option and false if the user selects the suffix search option.
+     * @return The method is returning an integer value, which is the option selected by the user for
+     * the type of search (prefix, suffix, or exact coincidence).
      */
     public int prefixOrSuffix() {
         int optionMenu = 0;
@@ -540,12 +538,11 @@ public class Main {
         return optionMenu;
     }
 
+    
     /**
-     * This function prompts the user to select a product from a list and validates
-     * their input.
+     * This function prompts the user to select a product from a list and validates their input.
      * 
-     * @return The method is returning an integer value, which is the user's
-     *         selected product.
+     * @return The method is returning an integer value, which is the user's selected product.
      */
     public int selectProduct() {
         System.out.println(controller.showProducts());
@@ -560,12 +557,11 @@ public class Main {
         return o;
     }
 
+    
     /**
-     * This Java function prompts the user to select a category type and returns the
-     * selected category.
+     * This function prompts the user to select a category type and returns the selected category.
      * 
-     * @return The method is returning an integer value which represents the
-     *         selected category.
+     * @return The method is returning an integer value, which is the selected type of category.
      */
     public int selectCategory() {
         boolean exit = false;
@@ -584,14 +580,13 @@ public class Main {
         return typeCategory;
     }
 
+    
     /**
-     * This function prompts the user to choose between a range search or an exact
-     * search and returns a
-     * boolean value based on the user's choice.
+     * This function prompts the user to choose between a range search and an exact search and returns
+     * a boolean value based on the user's choice.
      * 
-     * @return A boolean value indicating whether the user chose a range search
-     *         (true) or an exact
-     *         search (false).
+     * @return A boolean value is being returned, which is true if the user selects "Range Search" and
+     * false if the user selects "Exact Search".
      */
     public boolean rangeOrExact() {
         int optionMenu = 0;
@@ -614,15 +609,13 @@ public class Main {
         return false;
     }
 
+    
     /**
-     * The function prompts the user to enter a range minimum and maximum, ensuring
-     * that the maximum is
-     * greater than or equal to the minimum, and returns an array containing these
-     * values.
+     * This function prompts the user to enter a range minimum and maximum, ensuring that the maximum
+     * is greater than or equal to the minimum, and returns an array containing these values.
      * 
-     * @return An array of two doubles, where the first element is the range minimum
-     *         and the second
-     *         element is the range maximum.
+     * @return An array of two doubles, where the first element is the range minimum and the second
+     * element is the range maximum.
      */
     public double[] rangeMinAndMax() {
         double[] minAndMax = new double[2];
@@ -642,14 +635,13 @@ public class Main {
         return minAndMax;
     }
 
+    
     /**
-     * The function prompts the user to enter a range of dates and returns an array
-     * containing the
+     * This function prompts the user to enter a range of dates and returns an array containing the
      * minimum and maximum dates.
      * 
-     * @return The method is returning an array of Date objects, which contains the
-     *         minimum and maximum
-     *         dates entered by the user after validating the input.
+     * @return The method is returning an array of Date objects, which contains the minimum and maximum
+     * dates entered by the user.
      */
     public Date[] rangeMinAndMaxDate() {
         Date[] minAndMax = new Date[2];
@@ -690,14 +682,17 @@ public class Main {
         return minAndMax;
     }
 
+    
     /**
-     * This function prompts the user to enter a range minimum and maximum, ensuring
-     * that the maximum
-     * is greater than or equal to the minimum, and returns them as a string array.
+     * This function prompts the user to enter a range minimum and maximum and returns them as a string
+     * array.
      * 
-     * @return The method is returning a String array containing the range minimum
-     *         and maximum values
-     *         entered by the user.
+     * @param recharge A boolean variable that indicates whether the method is being called after a
+     * recharge or not. If it is true, it means that the method is being called after a recharge and
+     * the user will be prompted to enter the range minimum to search. If it is false, the user will
+     * not be prompted to enter
+     * @return An array of two strings, where the first string is the range minimum and the second
+     * string is the range maximum.
      */
     public String[] rangeMinAndMaxString(boolean recharge) {
         String[] minAndMax = new String[2];

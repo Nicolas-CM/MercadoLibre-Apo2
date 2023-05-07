@@ -31,9 +31,15 @@ public class Order {
         this.dateFormatDate = formatedDate.parse(date);
     }
 
+    
     /**
-     * This function calculates the total price of an order by multiplying the price of each product by
-     * its corresponding amount and summing them up.
+     * This function calculates the total price of a couple's order based on the product price and the
+     * amount ordered.
+     * 
+     * @param couple The parameter "couple" is an object of type "CoupleOrderAmount", which contains
+     * information about a product and the amount ordered. The method "calculateOrderPrice" takes this
+     * object as input and calculates the total price of the order by multiplying the price of the
+     * product with the amount ordered and
      */
     public void calculateOrderPrice(CoupleOrderAmount couple){
         this.price += couple.getProduct().getPrice() * couple.getAmount();
@@ -106,13 +112,14 @@ public class Order {
         this.date = date;
     }
 
+    
     /**
-     * The function displays a list of products in an order or returns a message if the order list is
-     * empty.
+     * This Java function returns a string containing a list of products ordered by a buyer, or a
+     * message indicating that the list is empty.
      * 
-     * @return The method `showProducts()` returns a string message that shows the products of the
-     * order. If the list of products is not empty, it shows each product with its corresponding index.
-     * If the list is empty, it returns a message indicating that the order list is empty.
+     * @return The method `showProducts` is returning a string message that shows the list of products
+     * ordered by the buyer. If the list is not empty, it will show the details of each product in the
+     * list. If the list is empty, it will show a message indicating that the list is empty.
      */
     public String showProducts() {
         String msj = "\nORDER PRODUCTS OF " + nameBuyer.toUpperCase();
@@ -127,12 +134,14 @@ public class Order {
         }
     }
 
+    /**
+     * This is a Java function that returns a string representation of an object, including the name of
+     * the buyer, price, date, and a list of products.
+     * 
+     * @return A string representation of an object that includes the name of the buyer, the price, the
+     * date, and the products purchased.
+     */
     @Override
-    // The `toString()` method is overriding the default implementation of the method inherited from
-    // the `Object` class. It returns a string representation of the `Order` object, which includes the
-    // name of the buyer, the total price of the order, the date of the order, and a list of the
-    // products ordered. This method is often used for debugging and logging purposes, as well as for
-    // displaying the object's information in a user interface.
     public String toString() {
         return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts();    }
 

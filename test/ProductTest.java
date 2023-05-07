@@ -19,7 +19,7 @@ public class ProductTest {
         container = MercadoLibre.getInstance();
     }
 
-    //addProduct
+  
 
     @Test
     public void testAddProductSuccess() throws ObjectWithSameName {
@@ -48,6 +48,10 @@ public class ProductTest {
         assertEquals(10, product.getAmount());
         assertEquals("ELECTRONIC", product.getCategory().toString());
     }
+
+
+
+
 
 
 
