@@ -244,6 +244,8 @@ public class MLController {
             }
             if(stringSearcher.binarySearch(arr2, min)!=-1){
                 return mercadoLibre.getProducts().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
+            }else{
+                return "The product doesn't exist or is misspelled";
             }
         }
         return printInRange(position, minToMax, true);
@@ -547,6 +549,18 @@ public class MLController {
             }
         }
         ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
+        if (position.isEmpty()) {
+            mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
+            String[] arr2 = new String[mercadoLibre.getOrders().size()];
+            for (int i = 0; i < arr.length; i++) {
+                arr2[i] = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
+            }
+            if(stringSearcher.binarySearch(arr2, min)!=-1){
+                return mercadoLibre.getOrders().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
+            }else{
+                return "The buyer doesn't exist or is misspelled";
+            }
+        }
         return printInRange(position, minToMax, false);
     }
 
