@@ -63,4 +63,13 @@ public class ProductTest {
         assertEquals("\n2)  Name: macbook pro 2\n Description: Apple Laptop\n Price: 2000.0\n Actual stock: 10\n Category: ELECTRONIC\n Times purchased: 0\n3)  Name: macbook pro 3\n Description: Apple Laptop\n Price: 3000.0\n Actual stock: 10\n Category: ELECTRONIC\n Times purchased: 0" , result);
     }
 
+    @Test
+    public void testSearchProductByCategoryWithCategoryNotFound() throws ObjectWithSameName, ObjectWithInvalidAmount {
+        controller.addProduct("Macbook Pro 10", "Apple Laptop", 1999, 10, 3);
+        controller.addProduct("Macbook Pro 2", "Apple Laptop", 2000, 10, 3);
+        String result = controller.searchProductByCategory(1, 1, true);
+        assertEquals("\nThere are not elements on this range" , result);
+    }
+
+
 }
