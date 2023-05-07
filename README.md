@@ -55,6 +55,18 @@ Completeness = test cases / total functionalities
    Reliability = 0.875
    
    Completeness = 2.66
+   
+   
+**Iteration 5 (commit ID: ba55ab95f3af362826f1c17613021ae46fbfa4bb)**
+
+   Error - failure density = 0.11
+   
+   Reliability = 0.89
+   
+   Completeness = 3
+   
+   
+ 
 
 
 ------
