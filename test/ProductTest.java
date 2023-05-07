@@ -18,12 +18,26 @@ public class ProductTest {
         container = MercadoLibre.getInstance();
     }
 
+    public void setup1() throws ObjectWithSameName, ObjectWithInvalidAmount{
+        controller.addProduct("Macbook Pro 10", "Apple Laptop", 1999, 10, 3);
+        controller.addProduct("Macbook Pro 2", "Apple Laptop", 2000, 10, 3);
+        controller.addProduct("Macbook Pro 3", "Apple Laptop", 3000, 10, 3);
+        controller.addProduct("Macbook Pro 4", "Apple Laptop", 7000, 10, 3);
+    }
+
     @Test
     public void testAddProductSuccess() throws ObjectWithSameName {
         Product product = new Product("Macbook Pro", "Apple Laptop", 1299.99, 10, 1);
         String result = container.addProduct(product);
         assertEquals("The process was correct", result);
         assertEquals(1, container.getProducts().size());
+    }
+
+    @Test
+    public void testSearchProductByPriceNotExist() throws ObjectWithSameName, ObjectWithInvalidAmount {
+        setup1();
+        String result = controller.searchProductsByPrice(8000.0, 9000.0, true);
+        assertEquals("\nThere are not elements on this range" , result);
     }
 
     @Test(expected = ObjectWithSameName.class)
@@ -70,6 +84,8 @@ public class ProductTest {
         String result = controller.searchProductByCategory(1, 1, true);
         assertEquals("\nThere are not elements on this range" , result);
     }
+
+
 
 
 }
