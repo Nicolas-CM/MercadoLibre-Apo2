@@ -82,6 +82,10 @@ public class Product  {
         return category;
     }
 
+    public int getCategoryPos() {
+        return category.ordinal();
+    }
+
     /**
      * @param category the category to set
      */
@@ -109,7 +113,7 @@ public class Product  {
     // including its name, description, price, actual stock, category, and number of times it has been
     // purchased. This method is often used for debugging and logging purposes.
     public String toString() {
-        return "Name: " + name + "\nDescription: " + description + "\nPrice: " + price + "\nActual stock: "+ amount + "\nCategory: " + category + "\nTimes purchased: " + numberPurchases;
+        return "Name: " + name + "\nDescription: " + description + "\nPrice: " + price + "\nActual stock: "+ amount + "\nCategory: " + category + "\nTimes purchased: " + numberPurchases+"\n";
     }
 
 }

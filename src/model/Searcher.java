@@ -1,6 +1,9 @@
 package model;
 
-import java.util.ArrayList;
+import // `java.util.ArrayList` is a class that provides a resizable array implementation in Java. It
+// is used in this code to create a new ArrayList that will contain the elements within a
+// specified range.
+java.util.ArrayList;
 
 public class Searcher<K extends Comparable<K>> {
 
@@ -48,6 +51,21 @@ public class Searcher<K extends Comparable<K>> {
 		}
 	}
 
+	/**
+	 * This is a Java function that performs binary search on an array to find the index of a target
+	 * value, and can optionally return the index of the first or last occurrence of the target value
+	 * depending on a boolean parameter.
+	 * 
+	 * @param arr an array of elements of type K, which is the type parameter of the array
+	 * @param target The value that we are searching for in the array.
+	 * @param lower A boolean parameter that determines whether the binary search should return the index
+	 * of the first occurrence of the target value (if it exists) or the index of the last occurrence of
+	 * the target value (if it exists). If lower is true, the method will return the index of the first
+	 * occurrence (i.e
+	 * @return The method returns an integer representing the index of the target element in the array if
+	 * it is found, or the index of the closest element to the target based on the specified range (lower
+	 * or upper). If the target is outside the range of the array, it returns -1.
+	 */
 	public int binarySearchRange(K[] arr, K target, boolean lower) {
 		int left = 0;
 		int right = arr.length - 1;

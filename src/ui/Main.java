@@ -109,6 +109,95 @@ public class Main {
 
 
     /**
+     * Description: Allows select the option of the search Product
+     *
+     */
+    public void searchProductMenu() {
+        if(controller.productsIsEmpty()){
+            System.out.println("There aren't products registered for search");
+            return;
+        }
+        int optionMenu = 0;
+        
+        boolean exit = false;
+        do {
+            System.out.println(
+                    "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu"+ 
+                            "\n 1) Search by name" +
+                            "\n 2) Search by price" +
+                            "\n 3) Search by category" +
+                            "\n 4) Search by number of purchases" +
+                            "\n-------------------");
+            optionMenu = validateIntegerOption();
+            System.out.println("\n");
+            
+            switch (optionMenu) {
+                case 0:
+                    exit = true;
+                    break;
+                case 1:
+                    searchProductByName();
+                    break;
+                case 2:
+                    searchProductByPrice();
+                    break;
+                case 3:
+                    searchProductByCategory();
+                    break;
+                case 4:
+                    searchProductBySells();
+                    break;
+                default:
+                    System.out.println("------------------\nValue incorrect!");
+                    break;
+            }
+        } while (exit == false);
+    }
+
+    /**
+     * Description: Allows select the option of the search Order
+     *
+     */
+    public void searchOrderMenu() {
+        if(controller.orderIsEmpty()){
+            System.out.println("There aren't orders registered for search");
+            return;
+        }
+        int optionMenu=0;
+        
+        boolean exit = false;
+        do {
+            System.out.println(
+                    "----------\nSearch Order Menu\n---------- Choose a option:\n 0) Exit of Menu" + 
+                            "\n 1) Search by buyer name" +
+                            "\n 2) Search by price" +
+                            "\n 3) Search by date" +
+                            "\n-------------------");
+            optionMenu = validateIntegerOption();
+            System.out.println("\n");
+            
+            switch (optionMenu) {
+                case 0:
+                    exit = true;
+                    break;
+                case 1:
+                    searchOrderByBuyerName();
+                    break;
+                case 2:
+                    searchOrderByTotalPrice();
+                    break;
+                case 3:
+                    
+                    break;
+                default:
+                    System.out.println("------------------\nValue incorrect!");
+                    break;
+            }
+        } while (exit == false);
+    }
+
+
+    /**
      * This function prompts the user to input information about a product and then adds it to a
      * controller object, handling any exceptions that may occur.
      */
@@ -151,7 +240,12 @@ public class Main {
         String nameBuyer = reader.nextLine();
         controller.addOrder(nameBuyer);
         while (finish == 0) {
+
             System.out.println("Writte the name of the product");
+            //falta acomodar el buscar aquí ^
+
+
+
             String product = reader.nextLine();
             System.out.println("Write the Amount of this product");
             int amount = validateIntegerOption();
@@ -187,11 +281,15 @@ public class Main {
 
     }
 
-    public void searchProductByPrice(){
-        boolean option = rangeOrExact();
-        if(option){
-            double[] minAndMax = rangeMinAndMax();
-            System.out.println("If you wanna see the list from minimum to maximum select 1, otherwise select 2");
+    /**
+     * This function prompts the user to select whether they want to see a list from minimum to maximum
+     * or not, and returns a boolean value accordingly.
+     * 
+     * @return A boolean value indicating whether the user wants to see the list from minimum to
+     * maximum (true) or not (false).
+     */
+    public boolean minToMax(){
+        System.out.println("If you wanna see the list from minimum to maximum select 1, otherwise select 2");
             int minOrMax= reader.nextInt();
             while (minOrMax>2 || minOrMax<1) {
                 System.out.println("Write a valid option");
@@ -201,6 +299,27 @@ public class Main {
             if(minOrMax==1){
                 minToMax=true;
             }
+            return minToMax;
+    }
+    
+    public void searchProductByName(){
+        boolean option = prefixOrSuffix();
+        if(option){
+            String[] minAndMax = rangeMinAndMaxString();
+            boolean minToMax= minToMax();
+            System.out.println(controller.searchProducByName(minAndMax[0], minAndMax[1], minToMax));
+        } //Pendiente el else
+        
+    }
+
+    /**
+     * This function searches for products by price, either within a range or for an exact price.
+     */
+    public void searchProductByPrice(){
+        boolean option = rangeOrExact();
+        if(option){
+            double[] minAndMax = rangeMinAndMax();
+            boolean minToMax= minToMax();
             System.out.println(controller.searchProductsByPrice(minAndMax[0], minAndMax[1], minToMax));
         }else{
             System.out.println("Write the price to search");
@@ -209,21 +328,16 @@ public class Main {
         }
     }  
 
+    /**
+     * This function searches for products based on their sales, either within a range or an exact
+     * number.
+     */
     public void searchProductBySells(){
         boolean option = rangeOrExact();
         if(option){
-            int[] minAndMax = rangeMinAndMaxInt();
-            System.out.println("If you wanna see from minimum to maximum select 1, otherwise select 2");
-            int minOrMax= reader.nextInt();
-            while (minOrMax>2 || minOrMax<1) {
-                System.out.println("Write a valid option");
-                minOrMax = reader.nextInt();
-            }
-            boolean minToMax= false;
-            if(minOrMax==1){
-                minToMax=true;
-            }
-            System.out.println(controller.searchProductBySells(minAndMax[0], minAndMax[1], minToMax));
+            double[] minAndMax = rangeMinAndMax();
+            boolean minToMax= minToMax();
+            System.out.println(controller.searchProductBySells((int) minAndMax[0], (int) minAndMax[1], minToMax));
         }else{
             System.out.println("Write the number of purchases to search");
             int minAndMax = reader.nextInt();
@@ -231,7 +345,62 @@ public class Main {
         }
     }   
     
+    /**
+     * This function searches for products by category and prints the results.
+     */
+    public void searchProductByCategory(){
+        int minAndMax = selectCategory();
+        System.out.println(controller.searchProductByCategory(minAndMax, minAndMax, true));
+    }   
+
+    public void searchOrderByBuyerName(){
+        boolean option = prefixOrSuffix();
+        if(option){
+            String[] minAndMax = rangeMinAndMaxString();
+            boolean minToMax= minToMax();
+            System.out.println(controller.searchOrderByBuyerName(minAndMax[0], minAndMax[1], minToMax));
+        } //Pendiente el else
+        
+    }
+
+    public void searchOrderByTotalPrice(){
+        boolean option = rangeOrExact();
+        if(option){
+            double[] minAndMax = rangeMinAndMax();
+            boolean minToMax= minToMax();
+            System.out.println(controller.searchOrderByTotalPrice(minAndMax[0], minAndMax[1], minToMax));
+        }else{
+            System.out.println("Write the number of purchases to search");
+            double minAndMax = reader.nextDouble();
+            System.out.println(controller.searchOrderByTotalPrice(minAndMax, minAndMax, true));
+        }
+    }
+
+    public void searchOrderByDate(){
+       //Hagale pues flamini rata
+    }
     
+    
+    public boolean prefixOrSuffix() {
+        int optionMenu = 0;
+        boolean exit = false;
+        System.out.println(
+                "\n----------\nType of search\n---------- Choose a option:\n 1) Prefix Search" +
+                        "\n 2) Suffix Search " +
+                        "\n-------------------");
+        do {
+            optionMenu = validateIntegerOption();
+            if (optionMenu < 1 || optionMenu > 2) {
+                System.out.println("This isn't a valid option, please select another one: ");
+            } else {
+                exit = true;
+            }
+        } while (!exit);
+        if(optionMenu==1){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * This function prompts the user to select a product from a list and validates their input.
@@ -274,106 +443,6 @@ public class Main {
     }
 
     /**
-     * validateIntegerOption: This method checks if a number is an integer
-     *
-     * @return option - int: Returns the entered number if it is an integer or
-     *         returns -1 if it is not an integer
-     */
-    public int validateIntegerOption() {
-        int option = 0;
-
-        if (reader.hasNextInt()) {
-            option = reader.nextInt();
-        } else {
-            reader.nextLine();
-            option = -1;
-        }
-
-        return option;
-    }
-
-    /**
-     * Description: Allows select the option of the search Product
-     *
-     */
-    public void searchProductMenu() {
-        int optionMenu = 0;
-        
-        boolean exit = false;
-        do {
-            System.out.println(
-                    "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu\n 1) Search by name"
-                            +
-                            "\n 2) Search by price" +
-                            "\n 3) Search by category" +
-                            "\n 4) Search by number of purchases" +
-                            "\n-------------------");
-            optionMenu = validateIntegerOption();
-            System.out.println("\n");
-            
-            switch (optionMenu) {
-                case 0:
-                    exit = true;
-                    break;
-                case 1:
-    
-                    break;
-                case 2:
-                    searchProductByPrice();
-                    break;
-                case 3:
-                    //
-                    break;
-                case 4:
-                    searchProductBySells();
-                    break;
-                default:
-                    System.out.println("------------------\nValue incorrect!");
-                    break;
-            }
-        } while (exit == false);
-    }
-
-    /**
-     * Description: Allows select the option of the search Order
-     *
-     */
-    public void searchOrderMenu() {
-        int optionMenu=0;
-        
-        boolean exit = false;
-        do {
-            System.out.println(
-                    "----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu" + 
-                            "\n 1) Search by buyer name" +
-                            "\n 2) Search by price" +
-                            "\n 3) Search by date" +
-                            "\n-------------------");
-            optionMenu = validateIntegerOption();
-            System.out.println("\n");
-            
-            switch (optionMenu) {
-                case 0:
-                    exit = true;
-                    break;
-                case 1:
-                    //
-                    break;
-                case 2:
-                    //
-                    break;
-                case 3:
-                    //
-                    break;
-                default:
-                    System.out.println("------------------\nValue incorrect!");
-                    break;
-            }
-        } while (exit == false);
-    }
-
-
-    /**
      * This function prompts the user to choose between a range search or an exact search and returns a
      * boolean value based on the user's choice.
      * 
@@ -384,7 +453,7 @@ public class Main {
         int optionMenu = 0;
         boolean exit = false;
         System.out.println(
-                "\n----------\nSearch Product Menu\n---------- Choose a option:\n 1) Range Search" +
+                "\n----------\nType of search\n---------- Choose a option:\n 1) Range Search" +
                         "\n 2) Exact Search " +
                         "\n-------------------");
         do {
@@ -426,29 +495,42 @@ public class Main {
         return minAndMax;
     }
 
-    /**
-     * The function prompts the user to enter a range minimum and maximum, ensuring that the maximum is
-     * greater than or equal to the minimum, and returns an array containing these values.
-     * 
-     * @return An array of two doubles, where the first element is the range minimum and the second
-     * element is the range maximum.
-     */
-    public int[] rangeMinAndMaxInt(){
-        int[] minAndMax = new int[2];
-
+    public String[] rangeMinAndMaxString(){
+        String[] minAndMax = new String[2];
+        reader.nextLine();
         System.out.println("Enter the range minimum to search: ");
-        minAndMax[0] = reader.nextInt();
-        minAndMax[1] = -1;
+        minAndMax[0] = reader.nextLine();
+        minAndMax[1] = "";
 
         System.out.println("Enter the range maximum to search: ");
-        while (minAndMax[1] < minAndMax[0]) {
-            minAndMax[1] = reader.nextInt();
-            if (minAndMax[1] < minAndMax[0]) {
+        while (minAndMax[1].compareTo(minAndMax[0]) < 0) {
+            minAndMax[1] = reader.nextLine();
+            if (minAndMax[1].compareTo(minAndMax[0]) < 0) {
                 System.out.println("The range maximum must be bigger than the range minimum: ");
             }
         }
 
         return minAndMax;
+    }
+
+
+    /**
+     * validateIntegerOption: This method checks if a number is an integer
+     *
+     * @return option - int: Returns the entered number if it is an integer or
+     *         returns -1 if it is not an integer
+     */
+    public int validateIntegerOption() {
+        int option = 0;
+
+        if (reader.hasNextInt()) {
+            option = reader.nextInt();
+        } else {
+            reader.nextLine();
+            option = -1;
+        }
+
+        return option;
     }
 
 

@@ -123,7 +123,7 @@ public class Order {
             }
             return msj;
         } else {
-            return "The order list is Empty";
+            return "\nThe order list is Empty";
 
                    }
     }
@@ -135,7 +135,7 @@ public class Order {
     // products ordered. This method is often used for debugging and logging purposes, as well as for
     // displaying the object's information in a user interface.
     public String toString() {
-        return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts() + "\n";    }
+        return "Name buyer: " + nameBuyer +  "\nPrice: " + price +  "\nDate: " + date  + showProducts();    }
 
 
 
