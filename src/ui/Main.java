@@ -350,8 +350,8 @@ public class Main {
     public void searchProductByName() {
         int option = prefixOrSuffix();
         if(option==3){
-            System.out.println("Write the Product name");
             reader.nextLine();
+            System.out.println("Write the Product name");
             String s= reader.nextLine();
             System.out.println(controller.searchExactProductByName(s.toLowerCase(), s.toLowerCase(), true));
             return;

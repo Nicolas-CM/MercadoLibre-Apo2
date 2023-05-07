@@ -49,6 +49,17 @@ public class ProductTest {
         assertEquals("ELECTRONIC", product.getCategory().toString());
     }
 
+     @Test
+    public void testSearchProductPosByName() throws ObjectWithSameName, ObjectWithInvalidAmount {
+        controller.addProduct("Macbook Pro", "Apple Laptop", 1299.99, 10, 3);
+        Product product = controller.getMercadoLibre().getProducts().get(0); 
+        assertEquals("macbook pro", container.getProducts().get(controller.searchProductPosByName(product.getName())).getName());
+    }
+
+
+
+
+
 
 
 

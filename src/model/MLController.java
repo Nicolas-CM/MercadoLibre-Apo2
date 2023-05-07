@@ -234,7 +234,18 @@ public class MLController {
                 arr[i] = "";
             }
         }
+
         ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr, min, max);
+        if (position.isEmpty()) {
+            mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
+            String[] arr2 = new String[mercadoLibre.getProducts().size()];
+            for (int i = 0; i < arr.length; i++) {
+                arr2[i] = mercadoLibre.getProducts().get(i).getName().toLowerCase();
+            }
+            if(stringSearcher.binarySearch(arr2, min)!=-1){
+                return mercadoLibre.getProducts().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
+            }
+        }
         return printInRange(position, minToMax, true);
     }
 
