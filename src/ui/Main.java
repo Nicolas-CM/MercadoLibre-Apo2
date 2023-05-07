@@ -76,7 +76,6 @@ public class Main {
                             "\n 7) Search Product" +
                             "\n-------------------");
             optionMenu = validateIntegerOption();
-            System.out.println("\n");
 
             switch (optionMenu) {
                 case 0:
@@ -124,14 +123,14 @@ public class Main {
         boolean exit = false;
         do {
             System.out.println(
-                    "\n----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu" +
+                    "----------\nSearch Product Menu\n---------- Choose a option:\n 0) Exit of Menu" +
                             "\n 1) Search by name" +
                             "\n 2) Search by price" +
                             "\n 3) Search by category" +
                             "\n 4) Search by number of purchases" +
+                            "\n 5) Search by number of Available quantity" +
                             "\n-------------------");
             optionMenu = validateIntegerOption();
-            System.out.println("\n");
 
             switch (optionMenu) {
                 case 0:
@@ -141,13 +140,16 @@ public class Main {
                     searchProductByName();
                     break;
                 case 2:
-                    searchProductByPrice();
+                    searchProductByPrice(); //Numeric Finish
                     break;
                 case 3:
-                    searchProductByCategory();
+                    searchProductByCategory(); //Finish
                     break;
                 case 4:
-                    searchProductBySells();
+                    searchProductBySells(); //Numeric Finish
+                    break;
+                case 5:
+                    searchProductByAmount(); //Numeric Finish
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -186,11 +188,10 @@ public class Main {
                     searchOrderByBuyerName();
                     break;
                 case 2:
-                    searchOrderByTotalPrice();
+                    searchOrderByTotalPrice(); //Numeric Finish
                     break;
                 case 3:
                     searchOrderByDate();
-
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -337,6 +338,19 @@ public class Main {
             System.out.println("Write the number of purchases to search");
             int minAndMax = reader.nextInt();
             System.out.println(controller.searchProductBySells(minAndMax, minAndMax, true));
+        }
+    }
+
+    public void searchProductByAmount() {
+        boolean option = rangeOrExact();
+        if (option) {
+            double[] minAndMax = rangeMinAndMax();
+            boolean minToMax = minToMax();
+            System.out.println(controller.searchProductByStock((int) minAndMax[0], (int) minAndMax[1], minToMax));
+        } else {
+            System.out.println("Write the number of purchases to search");
+            int minAndMax = reader.nextInt();
+            System.out.println(controller.searchProductByStock(minAndMax, minAndMax, true));
         }
     }
 

@@ -158,14 +158,13 @@ public class MLController {
             } else {
                 throw new ObjectOutOfStock("The product is Out of Stock, select another one");
             }
-        }else{
+        } else {
             return "no se encontro";
-            
+
         }
-    
+
     }
 
-    
     /**
      * The function searches for a product by name in a sorted list of products
      * using binary search.
@@ -179,7 +178,7 @@ public class MLController {
      *         will return a negative value.
      */
     public int searchProductPosByName(String product) {
-        mercadoLibre.getProducts().sort(Comparator.comparing(Product :: getName));
+        mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
         String[] arr = new String[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getName();
@@ -199,23 +198,9 @@ public class MLController {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getName();
         }
-
-        String msj = "";
-
         ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        if (minToMax) {
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        } else {
-            for (int index = position.size(); index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        }
-        return msj;
+
+        return printInRange(position, minToMax, true);
     }
 
     /**
@@ -236,30 +221,14 @@ public class MLController {
      *         price, depending on the value of the boolean parameter "minToMax".
      */
     public String searchProductsByPrice(Double min, Double max, boolean minToMax) {
-        mercadoLibre.getProducts().sort(Comparator.comparingDouble(Product :: getPrice));
+        mercadoLibre.getProducts().sort(Comparator.comparingDouble(Product::getPrice));
         Double[] arr = new Double[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getPrice();
         }
-
-        String msj = "";
-
         ArrayList<Integer> position = doubleSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        if (minToMax) {
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") "
-                        + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        } else {
-            for (int index = position.size()-1; index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") "
-                        + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        }
-        return msj;
+
+        return printInRange(position, minToMax, true);
     }
 
     /**
@@ -287,31 +256,15 @@ public class MLController {
      *         one with the highest stock
      *         amount. If it is false, the
      */
-    public String searchProductByStock(int min, int max, boolean minToMax) {//Amount 
-        mercadoLibre.getProducts().sort(Comparator.comparingInt(Product :: getAmount));
+    public String searchProductByStock(int min, int max, boolean minToMax) {// Amount
+        mercadoLibre.getProducts().sort(Comparator.comparingInt(Product::getAmount));
         Integer[] arr = new Integer[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getAmount();
         }
-
-        String msj = "";
-
         ArrayList<Integer> position = integerSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        if (minToMax) {
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") "
-                        + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        } else {
-            for (int index = position.size()-1; index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") "
-                        + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        }
-        return msj;
+
+        return printInRange(position, minToMax, true);
     }
 
     /**
@@ -335,61 +288,46 @@ public class MLController {
      *         highest to lowest, depending on the value of the boolean parameter
      *         "minToMax".
      */
-    public String searchProductBySells(int min, int max, boolean minToMax) {//NumberPurchases
-        mercadoLibre.getProducts().sort(Comparator.comparingInt(Product :: getNumberPurchases));
+    public String searchProductBySells(int min, int max, boolean minToMax) {// NumberPurchases
+        mercadoLibre.getProducts().sort(Comparator.comparingInt(Product::getNumberPurchases));
         Integer[] arr = new Integer[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getNumberPurchases();
         }
-
-        String msj = "";
-        
         ArrayList<Integer> position = integerSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        if (minToMax) {
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") "
-                        + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        } else {
-            for (int index = position.size(); index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") "
-                        + mercadoLibre.getProducts().get(position.get(index)).toString();
-            }
-        }
-        return msj;
+
+        return printInRange(position, minToMax, true);
     }
-    
+
     /**
-     * This function searches for products within a specified category range and returns a string
+     * This function searches for products within a specified category range and
+     * returns a string
      * message with the matching products.
      * 
-     * @param min The minimum value of the range to search for products by category.
-     * @param max The maximum value of the range to search for products by category.
-     * @param minToMax A boolean value that determines whether the search should be performed from the
-     * minimum value to the maximum value (true) or from the maximum value to the minimum value
-     * (false).
-     * @return The method is returning a String that contains a message with the products that match
-     * the given category range. If there are no products that match the range, the method returns a
-     * message indicating that there are no elements on this range.
+     * @param min      The minimum value of the range to search for products by
+     *                 category.
+     * @param max      The maximum value of the range to search for products by
+     *                 category.
+     * @param minToMax A boolean value that determines whether the search should be
+     *                 performed from the
+     *                 minimum value to the maximum value (true) or from the maximum
+     *                 value to the minimum value
+     *                 (false).
+     * @return The method is returning a String that contains a message with the
+     *         products that match
+     *         the given category range. If there are no products that match the
+     *         range, the method returns a
+     *         message indicating that there are no elements on this range.
      */
     public String searchProductByCategory(Integer min, Integer max, boolean minToMax) {
-        mercadoLibre.getProducts().sort(Comparator.comparingInt(Product :: getCategoryPos));
+        mercadoLibre.getProducts().sort(Comparator.comparingInt(Product::getCategoryPos));
         Integer[] arr = new Integer[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getProducts().get(i).getCategory().ordinal();
         }
-        String msj = "";
         ArrayList<Integer> position = integerSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        for (int index = 0; index < position.size(); index++) {
-            msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getProducts().get(position.get(index)).toString();
-        }
-        return msj;
+
+        return printInRange(position, minToMax, true);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,45 +352,40 @@ public class MLController {
      *         boolean parameter "minToMax".
      */
     public String searchOrderByTotalPrice(Double min, Double max, boolean minToMax) {
-        mercadoLibre.getOrders().sort(Comparator.comparingDouble(Order :: getPrice));
+        mercadoLibre.getOrders().sort(Comparator.comparingDouble(Order::getPrice));
         Double[] arr = new Double[mercadoLibre.getOrders().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getOrders().get(i).getPrice();
         }
-
-        String msj = "";
-
         ArrayList<Integer> position = doubleSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        if (minToMax) {
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
-            }
-        } else {
-            for (int index = position.size(); index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
-            }
-        }
-        return msj;
+
+        return printInRange(position, minToMax, false);
     }
 
     /**
-     * The function sorts a list of orders by date, performs a binary search on the list based on a
-     * given range, and returns a string representation of the orders in either ascending or descending
+     * The function sorts a list of orders by date, performs a binary search on the
+     * list based on a
+     * given range, and returns a string representation of the orders in either
+     * ascending or descending
      * order.
      * 
-     * @param max The maximum value to search for in the list of orders, based on the date in
-     * milliseconds.
-     * @param min The minimum value for the date range to search for orders.
-     * @param minToMax A boolean value that determines whether the search results should be sorted from
-     * minimum to maximum date or from maximum to minimum date. If it is true, the results will be
-     * sorted from minimum to maximum date, otherwise, they will be sorted from maximum to minimum
-     * date.
-     * @return The method is returning a String that contains information about the orders within a
-     * certain date range, sorted either from the earliest to the latest date or from the latest to the
-     * earliest date, depending on the value of the boolean parameter "minToMax".
+     * @param max      The maximum value to search for in the list of orders, based
+     *                 on the date in
+     *                 milliseconds.
+     * @param min      The minimum value for the date range to search for orders.
+     * @param minToMax A boolean value that determines whether the search results
+     *                 should be sorted from
+     *                 minimum to maximum date or from maximum to minimum date. If
+     *                 it is true, the results will be
+     *                 sorted from minimum to maximum date, otherwise, they will be
+     *                 sorted from maximum to minimum
+     *                 date.
+     * @return The method is returning a String that contains information about the
+     *         orders within a
+     *         certain date range, sorted either from the earliest to the latest
+     *         date or from the latest to the
+     *         earliest date, depending on the value of the boolean parameter
+     *         "minToMax".
      */
     public String searchOrderByDate(Date min, Date max, boolean minToMax) {
         Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
@@ -461,28 +394,13 @@ public class MLController {
                 return p1.getDateFormatDate().compareTo(p2.getDateFormatDate());
             }
         });
-        
         Date[] arr = new Date[mercadoLibre.getOrders().size()];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getOrders().get(i).getDateFormatDate();
         }
-
-        String msj = "";
-
         ArrayList<Integer> position = dateSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
-        }
-        if (minToMax) { 
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
-            }
-        } else {
-            for (int index = position.size(); index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
-            }
-        }
-        return msj;
+
+        return printInRange(position, minToMax, false);
     }
 
     public String searchOrderByBuyerName(String min, String max, boolean minToMax) {
@@ -496,23 +414,37 @@ public class MLController {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer();
         }
-
-        String msj = "";
-
         ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
-        if(position == null || position.isEmpty()){
-            return "There are not elements on this range";
+
+        return printInRange(position, minToMax, false);
+    }
+
+    public String printInRange(ArrayList<Integer> position, boolean minToMax, boolean isProduct) {
+        StringBuilder msj = new StringBuilder();
+        if (position == null || position.isEmpty()) {
+            return "\nThere are not elements on this range";
         }
-        if (minToMax) {
-            for (int index = 0; index < position.size(); index++) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
+        int sumIndex = 1;
+        int init = 0;
+        int limit = position.size();
+        if (!minToMax) {
+            sumIndex = -1;
+            init = position.size() - 1;
+            limit = -1;
+        }
+        if (isProduct) {
+            for (int index = init; index != limit; index += sumIndex) {
+                msj.append("\n").append((position.get(index) + 1)).append(") ")
+                        .append(mercadoLibre.getProducts().get(position.get(index)).toString());
             }
         } else {
-            for (int index = position.size(); index >= 0; index--) {
-                msj += "\n" + (position.get(index)+1) + ") " + mercadoLibre.getOrders().get(position.get(index)).toString();
+            for (int index = init; index != limit; index += sumIndex) {
+                msj.append("\n").append((position.get(index) + 1)).append(") ")
+                        .append(mercadoLibre.getOrders().get(position.get(index)).toString());
             }
         }
-        return msj;
+
+        return msj.toString();
     }
 
     /**
@@ -524,12 +456,12 @@ public class MLController {
      *         or a message indicating that the list is empty.
      */
     public String showProducts() {
-        String msj = "PRODUCTS LIST";
+        StringBuilder msj = new StringBuilder("PRODUCTS LIST");
         if (!mercadoLibre.getProducts().isEmpty()) {
             for (int i = 0; i < mercadoLibre.getProducts().size(); i++) {
-                msj += "\n" + (i + 1) + ") " + mercadoLibre.getProducts().get(i).toString() + "\n";
+                msj.append("\n").append((i + 1)).append(") ").append(mercadoLibre.getProducts().get(i).toString());
             }
-            return msj;
+            return msj.toString();
         } else {
             return "The products list is Empty";
         }
@@ -544,12 +476,12 @@ public class MLController {
      *         indicating that the list is empty.
      */
     public String showOrders() {
-        String msj = "ORDERS LIST";
+        StringBuilder msj = new StringBuilder("ORDERS LIST");
         if (!mercadoLibre.getOrders().isEmpty()) {
             for (int i = 0; i < mercadoLibre.getOrders().size(); i++) {
-                msj += "\n" + (i + 1) + ") " + mercadoLibre.getOrders().get(i).toString();
+                msj.append("\n").append((i + 1)).append(") ").append(mercadoLibre.getOrders().get(i).toString());
             }
-            return msj;
+            return msj.toString();
         } else {
             return "The orders list is Empty";
         }
@@ -579,11 +511,11 @@ public class MLController {
      */
     public String toStringCategory() {
         Category[] categories = Category.values();
-        String msj = "";
+        StringBuilder msj = new StringBuilder();
         for (int i = 0; i < categories.length; i++) {
-            msj += "\n " + i + ") " + categories[i];
+            msj.append("\n ").append(i).append(") ").append(categories[i]);
         }
-        return msj;
+        return msj.toString();
     }
 
     /**
@@ -594,32 +526,32 @@ public class MLController {
     }
 
     /**
-     * This function checks if the orders list in a marketplace object is empty and returns a boolean
+     * This function checks if the orders list in a marketplace object is empty and
+     * returns a boolean
      * value accordingly.
      * 
-     * @return A boolean value indicating whether the orders list in the mercadoLibre object is empty
-     * or not. If the list is empty, the method returns true, otherwise it returns false.
+     * @return A boolean value indicating whether the orders list in the
+     *         mercadoLibre object is empty
+     *         or not. If the list is empty, the method returns true, otherwise it
+     *         returns false.
      */
-    public boolean orderIsEmpty(){
-        if (mercadoLibre.getOrders().isEmpty()) {
-            return true;
-        }
-        return false;
+    public boolean orderIsEmpty() {
+        return (mercadoLibre.getOrders().isEmpty());
     }
 
     /**
-     * This function checks if the list of products in a marketplace object is empty and returns a
+     * This function checks if the list of products in a marketplace object is empty
+     * and returns a
      * boolean value accordingly.
      * 
-     * @return A boolean value indicating whether the list of products in the "mercadoLibre" object is
-     * empty or not. If the list is empty, the method will return "true", otherwise it will return
-     * "false".
+     * @return A boolean value indicating whether the list of products in the
+     *         "mercadoLibre" object is
+     *         empty or not. If the list is empty, the method will return "true",
+     *         otherwise it will return
+     *         "false".
      */
-    public boolean productsIsEmpty(){
-        if (mercadoLibre.getProducts().isEmpty()) {
-            return true;
-        }
-        return false;
+    public boolean productsIsEmpty() {
+        return (mercadoLibre.getProducts().isEmpty());
     }
 
 }

@@ -34,11 +34,16 @@ public class Searcher<K extends Comparable<K>> {
 	public ArrayList<Integer> binarySearchByRange(K[] array, K first, K last) {
 		int firstTemp = binarySearchRange(array, first, true);
 		int lastTemp = binarySearchRange(array, last, false);
-		if (firstTemp == -1) {
+		if (firstTemp ==-2) {
+			firstTemp = -1;
+		}else if (firstTemp == -1) {
 			firstTemp = 0;
 		}
 		if(lastTemp == -1){
 			lastTemp = array.length-1;
+		}
+		if (lastTemp == -2) {
+			firstTemp = -1;
 		}
 		if (firstTemp != -1 ) {
 			ArrayList<Integer> newArrayList = new ArrayList<>();
@@ -72,6 +77,12 @@ public class Searcher<K extends Comparable<K>> {
 		int index = -1;
 
 		// Verificar si el valor objetivo está fuera del rango del arreglo
+		if (lower && (target.compareTo(arr[right]) > 0)) {
+			return -2;
+		}
+		if (!lower && target.compareTo(arr[left]) < 0) {
+			return -2;
+		}
 		if (target.compareTo(arr[left]) < 0 || target.compareTo(arr[right]) > 0) {
 			return -1;
 		}

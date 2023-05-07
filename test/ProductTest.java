@@ -40,7 +40,7 @@ public class ProductTest {
     public void testAddedProductHasCorrectValues() throws ObjectWithSameName, ObjectWithInvalidAmount {
       
     
-        controller.addProduct("Macbook Pro", "Apple Laptop", 1299.99, 10, 1);
+        controller.addProduct("Macbook Pro", "Apple Laptop", 1299.99, 10, 3);
         Product product = controller.getMercadoLibre().getProducts().get(0); 
         assertEquals("macbook pro", product.getName());
         assertEquals("Apple Laptop", product.getDescription());
