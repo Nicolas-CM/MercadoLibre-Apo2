@@ -140,16 +140,16 @@ public class Main {
                     searchProductByName();
                     break;
                 case 2:
-                    searchProductByPrice(); //Numeric Finish
+                    searchProductByPrice(); // Numeric Finish
                     break;
                 case 3:
-                    searchProductByCategory(); //Finish
+                    searchProductByCategory(); // Category Finish
                     break;
                 case 4:
-                    searchProductBySells(); //Numeric Finish
+                    searchProductBySells(); // Numeric Finish
                     break;
                 case 5:
-                    searchProductByAmount(); //Numeric Finish
+                    searchProductByAmount(); // Numeric Finish
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -188,10 +188,10 @@ public class Main {
                     searchOrderByBuyerName();
                     break;
                 case 2:
-                    searchOrderByTotalPrice(); //Numeric Finish
+                    searchOrderByTotalPrice(); // Numeric Finish
                     break;
                 case 3:
-                    searchOrderByDate();
+                    searchOrderByDate(); // Date Finish
                     break;
                 default:
                     System.out.println("------------------\nValue incorrect!");
@@ -246,7 +246,7 @@ public class Main {
         System.out.println("\nWrite Buyer's name");
         String nameBuyer = reader.nextLine();
         controller.addOrder(nameBuyer);
-        
+
     }
 
     /**
@@ -296,6 +296,9 @@ public class Main {
         return minToMax;
     }
 
+    /**
+     * This Java function searches for a product by name based on user input.
+     */
     public void searchProductByName() {
         boolean option = prefixOrSuffix();
         if (option) {
@@ -341,6 +344,11 @@ public class Main {
         }
     }
 
+    /**
+     * This function searches for products based on their stock amount, either
+     * within a range or an
+     * exact amount.
+     */
     public void searchProductByAmount() {
         boolean option = rangeOrExact();
         if (option) {
@@ -362,8 +370,9 @@ public class Main {
         System.out.println(controller.searchProductByCategory(minAndMax, minAndMax, true));
     }
 
-    // The above code is a method in Java that is used to search for orders by the name of the buyer.
-    // However, the implementation of the method is not provided in the code snippet.
+    /**
+     * This Java function searches for orders by buyer name based on user input.
+     */
     public void searchOrderByBuyerName() {
         boolean option = prefixOrSuffix();
         if (option) {
@@ -374,8 +383,9 @@ public class Main {
 
     }
 
-    // The above code is a method in Java that performs a search for orders by their total price. It is
-    // likely part of a larger program that manages orders and their associated prices.
+    /**
+     * This function searches for orders by total price based on user input.
+     */
     public void searchOrderByTotalPrice() {
         boolean option = rangeOrExact();
         if (option) {
@@ -389,19 +399,19 @@ public class Main {
         }
     }
 
-    // The above code is a method in Java that is likely part of a larger program. It is named
-    // `searchOrderByDate()` and its purpose is not clear from the code snippet alone. However, based
-    // on its name, it is likely that the method is searching for orders by date in some sort of system
-    // or database. Without more context, it is impossible to determine exactly how the method is
-    // implemented or what it does.
+    /**
+     * This Java function searches for orders by date, either within a range or for
+     * a specific date.
+     */
     public void searchOrderByDate() {
         boolean option = rangeOrExact();
+        boolean validDate = false;
+        reader.nextLine();
         if (option) {
             Date[] minAndMax = rangeMinAndMaxDate();
             boolean minToMax = minToMax();
             System.out.println(controller.searchOrderByDate(minAndMax[0], minAndMax[1], minToMax));
         } else {
-            boolean validDate = false;
 
             while (!validDate) {
                 System.out.println("Enter the date to search (Format of date: dd/MM/yyyy): ");
@@ -419,6 +429,15 @@ public class Main {
         }
     }
 
+    /**
+     * This function prompts the user to choose between a prefix or suffix search
+     * and returns a boolean
+     * value based on the user's choice.
+     * 
+     * @return A boolean value is being returned, which is true if the user selects
+     *         the prefix search
+     *         option and false if the user selects the suffix search option.
+     */
     public boolean prefixOrSuffix() {
         int optionMenu = 0;
         boolean exit = false;
@@ -542,14 +561,19 @@ public class Main {
         return minAndMax;
     }
 
-    // The above code is a method in Java that returns an array of Double objects. The method is named
-    // "rangeMinAndMaxDate" and it is likely used to calculate the minimum and maximum values of a
-    // range of dates. However, without seeing the implementation of the method, it is difficult to
-    // determine its exact purpose.
+    /**
+     * The function prompts the user to enter a range of dates and returns an array
+     * containing the
+     * minimum and maximum dates.
+     * 
+     * @return The method is returning an array of Date objects, which contains the
+     *         minimum and maximum
+     *         dates entered by the user after validating the input.
+     */
     public Date[] rangeMinAndMaxDate() {
         Date[] minAndMax = new Date[2];
-        reader.nextLine();
         boolean validDate = false;
+        boolean validDate2 = false;
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
         while (!validDate) {
@@ -563,10 +587,17 @@ public class Main {
                 minAndMax[1] = format.parse(dateString2);
                 validDate = true;
 
-                while (minAndMax[1].compareTo(minAndMax[0]) < 0) {
-                    System.out.println("The range maximum must be bigger than the range minimum: ");
-                    dateString = reader.nextLine();
-                    minAndMax[1] = format.parse(dateString2);
+                while (minAndMax[1].compareTo(minAndMax[0]) < 0 && !validDate2) {
+                    try {
+                        System.out.println("The range maximum must be bigger than the range minimum: ");
+                        System.out.println("Enter the range maximum to search (Format of date: dd/MM/yyyy): ");
+                        dateString = reader.nextLine();
+                        minAndMax[1] = format.parse(dateString);
+                        validDate2 = true;
+
+                    } catch (ParseException e) {
+                        System.out.println("Please write a valid date");
+                    }
 
                 }
 
@@ -575,14 +606,18 @@ public class Main {
             }
         }
 
-     
-
         return minAndMax;
     }
 
-    // The above code is a method signature in Java that declares a method named `rangeMinAndMaxString`
-    // which returns an array of strings. However, the method body is not provided, so it is unclear
-    // what the method is intended to do.
+    /**
+     * This function prompts the user to enter a range minimum and maximum, ensuring
+     * that the maximum
+     * is greater than or equal to the minimum, and returns them as a string array.
+     * 
+     * @return The method is returning a String array containing the range minimum
+     *         and maximum values
+     *         entered by the user.
+     */
     public String[] rangeMinAndMaxString() {
         String[] minAndMax = new String[2];
         reader.nextLine();

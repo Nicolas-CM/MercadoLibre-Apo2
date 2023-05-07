@@ -403,6 +403,18 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
+    /**
+     * This function searches for orders by buyer name within a given range and returns the results in
+     * a specified order.
+     * 
+     * @param min The minimum value to search for in the list of buyer names.
+     * @param max The maximum value for the range of buyer names to search for.
+     * @param minToMax A boolean value that determines whether the search results should be sorted in
+     * ascending order (true) or descending order (false).
+     * @return The method is returning a string that contains the orders within the range of buyer
+     * names specified by the "min" and "max" parameters, sorted in ascending or descending order based
+     * on the value of the "minToMax" parameter.
+     */
     public String searchOrderByBuyerName(String min, String max, boolean minToMax) {
         Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
             @Override
@@ -419,6 +431,20 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
+    /**
+     * The function prints a range of elements from an ArrayList either in ascending or descending
+     * order and either as products or orders.
+     * 
+     * @param position An ArrayList of integers representing the positions of elements to be printed.
+     * @param minToMax A boolean value indicating whether the elements should be printed in ascending
+     * order (true) or descending order (false).
+     * @param isProduct isProduct is a boolean variable that determines whether the method should print
+     * products or orders. If isProduct is true, the method will print products, and if it is false,
+     * the method will print orders.
+     * @return The method is returning a String that contains a message with the elements within a
+     * given range of an ArrayList, either in ascending or descending order, and either as products or
+     * orders, depending on the parameters passed to the method.
+     */
     public String printInRange(ArrayList<Integer> position, boolean minToMax, boolean isProduct) {
         StringBuilder msj = new StringBuilder();
         if (position == null || position.isEmpty()) {
