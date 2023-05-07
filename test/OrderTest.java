@@ -50,11 +50,20 @@ public class OrderTest {
     }
 
     @Test(expected = ObjectOutOfStock.class)
-    public void testAddProduct() throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists{
+    public void testAddProductOutStock() throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists{
         controller.addOrder("Nicolas");
         controller.addProductToOrder(11, 3);
 
     }
+
+     @Test(expected = ObjectDoesntExists.class)
+    public void testAddProductDoesntExist() throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists{
+        controller.addOrder("Nicolas");
+        controller.addProductToOrder(11, 4);
+
+    }
+
+
 
 
 
