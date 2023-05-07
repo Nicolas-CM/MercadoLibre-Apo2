@@ -1,15 +1,14 @@
 package test;
 
-
 import model.*;
 import exceptions.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import org.junit.Before;
-
 
 public class OrderTest {
 
@@ -26,17 +25,17 @@ public class OrderTest {
         controller.addProduct("Macbook Pro 2018", "Apple Laptop", 1299.99, 10, 1);
     }
 
-   
-    
     @Test(expected = ObjectWithInvalidAmount.class)
     public void testEditAmountProductNegativeAmount() throws ObjectWithInvalidAmount {
-        // Prueba que se lance la excepción ObjectWithInvalidAmount cuando se intenta editar la cantidad a un número negativo
+        // Prueba que se lance la excepción ObjectWithInvalidAmount cuando se intenta
+        // editar la cantidad a un número negativo
         controller.editAmountProduct(1, -1);
     }
 
     @Test
     public void testEditAmountProductValidAmount() throws ObjectWithInvalidAmount {
-        // Prueba que la cantidad de un producto se cambie correctamente cuando se proporciona un valor válido
+        // Prueba que la cantidad de un producto se cambie correctamente cuando se
+        // proporciona un valor válido
         String result = controller.editAmountProduct(3, 2);
         assertEquals("The quantity of the product has been changed successfully", result);
         int pos = controller.searchProductPosByName("Macbook Pro 2018");
@@ -45,38 +44,43 @@ public class OrderTest {
 
     @Test(expected = ObjectWithInvalidAmount.class)
     public void testEditAmountProductNotFound() throws ObjectWithInvalidAmount {
-        // Prueba que el método devuelve "Product not found" cuando se intenta editar la cantidad de un producto que no existe
+        // Prueba que el método devuelve "Product not found" cuando se intenta editar la
+        // cantidad de un producto que no existe
         controller.editAmountProduct(2, -20);
     }
 
     @Test(expected = ObjectOutOfStock.class)
-    public void testAddProductOutStock() throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists{
+    public void testAddProductOutStock()
+            throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists {
         controller.addOrder("Nicolas");
         controller.addProductToOrder(11, 3);
 
     }
 
-     @Test(expected = ObjectDoesntExists.class)
-    public void testAddProductDoesntExist() throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists{
+    @Test(expected = ObjectDoesntExists.class)
+    public void testAddProductDoesntExist()
+            throws ObjectOutOfStock, ParseException, ObjectWithInvalidAmount, ObjectDoesntExists {
         controller.addOrder("Nicolas");
         controller.addProductToOrder(11, 4);
 
     }
 
     @Test
-    public void testAddOrder() throws ParseException{
+    public void testAddOrder() throws ParseException {
         controller.addOrder("Flamini");
-        
         assertEquals("flamini", container.getOrders().get(0).getNameBuyer());
-        
+
     }
 
-    
+    @Test(expected = ParseException.class)
+    public void testWriteDateParseException() throws ParseException {
+        Date date = null;
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
+        String dateString = "Your computer has virus";
 
+        date = format.parse(dateString);
 
-
-
-
+    }
 
 }
