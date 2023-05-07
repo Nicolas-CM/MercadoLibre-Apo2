@@ -63,6 +63,18 @@ public class OrderTest {
 
     }
 
+    @Test
+    public void testAddOrder() throws ParseException{
+        controller.addOrder("Flamini");
+        
+        assertEquals("flamini", container.getOrders().get(0).getNameBuyer());
+        
+    }
+
+    
+
+
+
 
 
 
