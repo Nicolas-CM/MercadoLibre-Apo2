@@ -236,13 +236,13 @@ public class Main {
 
         try {
             System.out.println("\n" + controller.addProduct(name, description, price, amount, category));
+            return;
         } catch (ObjectWithSameName e) {
             System.out.println("\n" + e.getMessage() + "\n");
             addProduct();
         } catch (ObjectWithInvalidAmount e) {
-
             System.out.println("\n" + e.getMessage() + "\n");
-
+            addProduct();
         }
     }
 
@@ -356,6 +356,7 @@ public class Main {
             System.out.println(controller.searchExactProductByName(s.toLowerCase(), s.toLowerCase(), true));
             return;
         }
+        
         String[] minAndMax = rangeMinAndMaxString(true);
         if (option==2) {
             while (minAndMax[0].length() != minAndMax[1].length()) {
@@ -364,10 +365,11 @@ public class Main {
                     minAndMax = rangeMinAndMaxString(false);
                 }
             }
-
+            boolean minToMax = minToMax();
+            System.out.println(controller.searchProductByName(minAndMax[0].toLowerCase(), minAndMax[1].toLowerCase(), minToMax, false));
+            return;
         }
         boolean minToMax = minToMax();
-
         System.out.println(controller.searchProductByName(minAndMax[0].toLowerCase(), minAndMax[1].toLowerCase(), minToMax, true));
 
     }
@@ -456,7 +458,9 @@ public class Main {
                     minAndMax = rangeMinAndMaxString(false);
                 }
             }
-
+            boolean minToMax = minToMax();
+            System.out.println(controller.searchOrderByBuyerName(minAndMax[0].toLowerCase(), minAndMax[1].toLowerCase(), minToMax, false));
+            return;
         }
         boolean minToMax = minToMax();
 
@@ -525,7 +529,7 @@ public class Main {
         System.out.println(
                 "\n----------\nType of search\n---------- Choose a option:\n 1) Prefix Search" +
                         "\n 2) Suffix Search " +
-                        "\n 3) Exact Coincidence"+
+                        "\n 3) Prefix and Exact Coincidence"+
                         "\n-------------------");
         do {
             optionMenu = validateIntegerOption();

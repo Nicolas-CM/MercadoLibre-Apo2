@@ -70,12 +70,11 @@ public class MLController {
      */
     public String addProduct(String name, String description, double price, int amount, int category)
             throws ObjectWithSameName, ObjectWithInvalidAmount {
-        Product product = new Product(name.toLowerCase(), description, price, amount, category);
         if (amount < 0) {
             throw new ObjectWithInvalidAmount("Please write a valid amount (amount must be grater than or equal to 0)");
         }
         if (searchProductPosByName(name.toLowerCase()) == -1) {
-            mercadoLibre.addProduct(product);
+            mercadoLibre.addProduct(new Product(name.toLowerCase(), description, price, amount, category));
             return "Product Added Correctly ";
         } else {
             throw new ObjectWithSameName(
@@ -204,125 +203,128 @@ public class MLController {
 
     }
 
+    
     /**
-     * The function searches for products with names within a specified range and
-     * returns a formatted
-     * string of the results.
+     * The function searches for a product within a given range of names and returns the result or an
+     * error message.
      * 
-     * @param min      The minimum string value to search for in the product names.
-     * @param max      The maximum value to search for in the range. It is used in
-     *                 the binary search
-     *                 algorithm to find the upper bound of the range.
-     * @param minToMax A boolean value indicating whether the search should be
-     *                 performed from the
-     *                 minimum value to the maximum value (true) or from the maximum
-     *                 value to the minimum value
-     *                 (false).
-     * @return The method is returning a string that contains the products whose
-     *         names fall within the
-     *         specified range, sorted either from minimum to maximum or from
-     *         maximum to minimum, depending on
-     *         the value of the boolean parameter `minToMax`.
+     * @param min The minimum value to search for in the range of product names.
+     * @param max The maximum string length to consider when searching for products by name.
+     * @param minToMax A boolean value that determines whether the search should be performed from the
+     * minimum value to the maximum value (true) or from the maximum value to the minimum value
+     * (false).
+     * @return The method is returning a String.
      */
     public String searchExactProductByName(String min, String max, boolean minToMax) {
         mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
         String[] arr = new String[mercadoLibre.getProducts().size()];
         for (int i = 0; i < arr.length; i++) {
-            if (mercadoLibre.getProducts().get(i).getName().length() >= min.length()) {
-                arr[i] = mercadoLibre.getProducts().get(i).getName().substring(0, min.length());
+            if (mercadoLibre.getProducts().get(i).getName().length() >= max.length()) {
+                arr[i] = mercadoLibre.getProducts().get(i).getName().substring(0, max.length());
             } else {
-                arr[i] = "";
+                arr[i] = mercadoLibre.getProducts().get(i).getName();
             }
         }
-
-        ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr, min, max);
-        if (position.isEmpty()) {
+        ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
+        if (position== null || position.isEmpty()) {
             mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
             String[] arr2 = new String[mercadoLibre.getProducts().size()];
-            for (int i = 0; i < arr.length; i++) {
+            for (int i = 0; i < arr2.length; i++) {
                 arr2[i] = mercadoLibre.getProducts().get(i).getName().toLowerCase();
             }
             if(stringSearcher.binarySearch(arr2, min)!=-1){
-                return mercadoLibre.getProducts().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
+                return (stringSearcher.binarySearch(arr2, min.toLowerCase())+1) +") " + mercadoLibre.getProducts().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
             }else{
-                return "The product doesn't exist or is misspelled";
+                return "The name of product doesn't exist or is misspelled";
             }
         }
         return printInRange(position, minToMax, true);
     }
 
+
+    
     /**
-     * This function searches for products within a given range of names, either by
-     * prefix or suffix,
-     * and returns the results in a specified order.
+     * The function searches for products within a specified range of names, either by prefix or
+     * suffix, and returns the results in a formatted string.
      * 
-     * @param min      A string representing the minimum value to search for in the
-     *                 product names.
-     * @param max      The maximum string value to search for in the product names.
-     * @param minToMax A boolean value indicating whether the search should be
-     *                 performed from the
-     *                 minimum value to the maximum value (true) or from the maximum
-     *                 value to the minimum value
-     *                 (false).
-     * @param preffix  A boolean value indicating whether the search should be based
-     *                 on the prefix of
-     *                 the product name or the suffix. If true, the search will be
-     *                 based on the prefix; if false, it
-     *                 will be based on the suffix.
-     * @return The method is returning a String that represents the result of a
-     *         search for products
-     *         within a certain range of names, based on the parameters passed to
-     *         the method. The returned
-     *         String contains information about the products found within the
-     *         range, including their names and
-     *         prices. If there is an exception thrown due to a
-     *         StringIndexOutOfBoundsException, the method
-     *         returns a message indicating that there may be products with a length
-     *         shorter than the
+     * @param min The minimum string value to search for in the product names.
+     * @param max The maximum string value to search for in the product names.
+     * @param minToMax A boolean value indicating whether the search should be performed from the
+     * minimum value to the maximum value (true) or from the maximum value to the minimum value
+     * (false).
+     * @param preffix A boolean value indicating whether the search should be based on the prefix of
+     * the product name or the suffix. If true, the search will be based on the prefix; if false, it
+     * will be based on the suffix.
+     * @return The method is returning a String that represents the result of a search for products
+     * within a certain range of names, based on the parameters passed to the method. The String
+     * contains information about the products found, including their names and prices.
      */
-    public String searchProductByName(String min, String max, boolean minToMax, boolean preffix)
-            throws StringIndexOutOfBoundsException {
-        try {
-            if (preffix) {
-                mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
-                String[] arr = new String[mercadoLibre.getProducts().size()];
-                for (int i = 0; i < arr.length; i++) {
+    public String searchProductByName(String min, String max, boolean minToMax, boolean preffix){
+        if (preffix) {
+            mercadoLibre.getProducts().sort(Comparator.comparing(Product::getName));
+            String[] arr = new String[mercadoLibre.getProducts().size()];
+            for (int i = 0; i < arr.length; i++) {
+                if(mercadoLibre.getProducts().get(i).getName().length()>=min.length()){
                     arr[i] = mercadoLibre.getProducts().get(i).getName().substring(0, min.length()).toLowerCase();
+                }else{
+                    arr[i] = mercadoLibre.getProducts().get(i).getName().toLowerCase();
                 }
-                String[] arr2 = new String[mercadoLibre.getProducts().size()];
-                for (int i = 0; i < arr2.length; i++) {
-                    arr2[i] = mercadoLibre.getProducts().get(i).getName().substring(0, max.length()).toLowerCase();
-                }
-                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
-                return printInRange(position, minToMax, true);
-            } else {
-                final int lastIndex = max.length();
-                Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
-                    @Override
-                    public int compare(Product p1, Product p2) {
-                        String sufijo1 = p1.getName().substring(p1.getName().length() - lastIndex).toLowerCase();
-                        String sufijo2 = p2.getName().substring(p2.getName().length() - lastIndex).toLowerCase();
-                        return sufijo1.compareTo(sufijo2);
-                    }
-                });
-
-                String[] arr = new String[mercadoLibre.getProducts().size()];
-                for (int i = 0; i < arr.length; i++) {
-                    String temp = mercadoLibre.getProducts().get(i).getName().toLowerCase();
-                    arr[i] = temp.substring(temp.length() - min.length());
-                }
-                String[] arr2 = new String[mercadoLibre.getProducts().size()];
-                for (int i = 0; i < arr2.length; i++) {
-                    String temp = mercadoLibre.getProducts().get(i).getName().toLowerCase();
-                    arr2[i] = temp.substring(temp.length() - max.length());
-                }
-                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
-                return printInRange(position, minToMax, true);
+                
             }
-        } catch (StringIndexOutOfBoundsException e) {
-            return "\nThere are some products that might have a lenght shother than the sufix or prefix\n";
+            String[] arr2 = new String[mercadoLibre.getProducts().size()];
+            for (int i = 0; i < arr2.length; i++) {
+                if(mercadoLibre.getProducts().get(i).getName().length()>=max.length()){
+                    arr2[i] = mercadoLibre.getProducts().get(i).getName().substring(0, max.length()).toLowerCase();
+                }else{
+                    arr2[i] = mercadoLibre.getProducts().get(i).getName().toLowerCase();
+                }
+                
+            }
+            ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+            return printInRange(position, minToMax, true);
+        } else {
+            final int lastIndex = max.length();
+            Collections.sort(mercadoLibre.getProducts(), new Comparator<Product>() {
+                @Override
+                public int compare(Product p1, Product p2) {
+                    String sufijo1 = "";
+                    if(p1.getName().length()>=min.length()){
+                        sufijo1= p1.getName().substring(p1.getName().length() - lastIndex).toLowerCase();
+                    }else{
+                        sufijo1= p1.getName().toLowerCase();
+                    }
+                    String sufijo2 = "";
+                    if(p2.getName().length()>=min.length()){
+                        sufijo2= p2.getName().substring(p2.getName().length() - lastIndex).toLowerCase();
+                    }else{
+                        sufijo2= p2.getName().toLowerCase();
+                    }
+                    return sufijo1.compareTo(sufijo2);
+                }
+            });
 
+            String[] arr = new String[mercadoLibre.getProducts().size()];
+            for (int i = 0; i < arr.length; i++) {
+                String temp = mercadoLibre.getProducts().get(i).getName().toLowerCase();
+                if(temp.length()>=min.length()){
+                    arr[i] = temp.substring(temp.length() - min.length());
+                }else{
+                    arr[i] = temp;
+                }
+            }
+            String[] arr2 = new String[mercadoLibre.getProducts().size()];
+            for (int i = 0; i < arr2.length; i++) {
+                String temp = mercadoLibre.getProducts().get(i).getName().toLowerCase();
+                if(temp.length()>=min.length()){
+                    arr2[i] = temp.substring(temp.length() - min.length());
+                }else{
+                    arr2[i] = temp;
+                }
+            }
+            ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+            return printInRange(position, minToMax, true);
         }
+           
     }
 
     /**
@@ -517,26 +519,17 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
+    
     /**
-     * The function searches for orders in a list by the buyer's name within a
-     * specified range and
-     * returns the results in a specific order.
+     * This Java function searches for orders in a given range of buyer names and returns them in a
+     * specified order.
      * 
-     * @param min      The minimum value to search for in the buyer name.
-     * @param max      The maximum value to search for in the range of buyer names.
-     * @param minToMax A boolean value that determines whether the search results
-     *                 should be sorted in
-     *                 ascending order (true) or descending order (false) based on
-     *                 the buyer name.
-     * @return The method is returning a string that contains the result of
-     *         searching for orders with
-     *         buyer names that fall within a certain range, specified by the "min"
-     *         and "max" parameters. The
-     *         search is performed on a list of orders stored in the "mercadoLibre"
-     *         object. The search results
-     *         are sorted based on the buyer name, and the method returns a
-     *         formatted string that contains the
-     *         order information for
+     * @param min A string representing the minimum value to search for in the buyer names.
+     * @param max The maximum value to search for in the range. It is used in the binary search
+     * algorithm to find the upper bound of the range.
+     * @param minToMax A boolean value that determines whether the search should be sorted from minimum
+     * to maximum (true) or from maximum to minimum (false).
+     * @return The method is returning a String.
      */
     public String searchExactOrderByBuyerName(String min, String max, boolean minToMax) {
         mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
@@ -545,18 +538,18 @@ public class MLController {
             if (mercadoLibre.getOrders().get(i).getNameBuyer().length() >= min.length()) {
                 arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, min.length()).toLowerCase();
             } else {
-                arr[i] = "";
+                arr[i] = mercadoLibre.getProducts().get(i).getName();
             }
         }
         ArrayList<Integer> position = stringSearcher.binarySearchByRange(arr, min, max);
-        if (position.isEmpty()) {
+        if (position== null || position.isEmpty()) {
             mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
             String[] arr2 = new String[mercadoLibre.getOrders().size()];
             for (int i = 0; i < arr.length; i++) {
                 arr2[i] = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
             }
             if(stringSearcher.binarySearch(arr2, min)!=-1){
-                return mercadoLibre.getOrders().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
+                return (stringSearcher.binarySearch(arr2, min.toLowerCase())+1) +") " + mercadoLibre.getOrders().get(stringSearcher.binarySearch(arr2, min.toLowerCase())).toString();
             }else{
                 return "The buyer doesn't exist or is misspelled";
             }
@@ -564,72 +557,85 @@ public class MLController {
         return printInRange(position, minToMax, false);
     }
 
+    
     /**
-     * This function searches for orders by buyer name within a given range, either
-     * by prefix or
+     * This Java function searches for orders by buyer name within a given range, either by prefix or
      * suffix, and returns the results in a specified order.
      * 
-     * @param min      A string representing the minimum value to search for in the
-     *                 buyer name.
-     * @param max      The maximum string value to search for in the buyer name.
-     * @param minToMax A boolean value indicating whether the search results should
-     *                 be sorted from
-     *                 minimum to maximum (true) or from maximum to minimum (false).
-     * @param preffix  A boolean value indicating whether the search should be based
-     *                 on the prefix
-     *                 (true) or suffix (false) of the buyer name.
-     * @return The method is returning a String that represents the result of a
-     *         search for orders in a
-     *         given range of buyer names, based on certain criteria such as prefix
-     *         or suffix, and sorted in
-     *         ascending or descending order. The returned String contains
-     *         information about the orders found,
-     *         including their buyer names, order IDs, and purchase dates. If there
-     *         is an exception due to a
-     *         StringIndexOutOfBoundsException, the method returns a message
+     * @param min The minimum value to search for in the buyer name.
+     * @param max The maximum value to search for in the buyer name.
+     * @param minToMax A boolean value indicating whether the search results should be sorted from
+     * minimum to maximum (true) or from maximum to minimum (false).
+     * @param preffix A boolean value indicating whether the search should be based on the prefix of
+     * the buyer name or the suffix. If true, the search will be based on the prefix; if false, it will
+     * be based on the suffix.
+     * @return The method is returning a String that represents the result of a search for orders by
+     * buyer name within a given range. The search can be performed by prefix or suffix, and the
+     * results can be sorted in ascending or descending order. The returned String contains information
+     * about the orders that match the search criteria.
      */
-    public String searchOrderByBuyerName(String min, String max, boolean minToMax, boolean preffix)
-            throws StringIndexOutOfBoundsException {
-        try {
-            if (preffix) {
-                mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
-                String[] arr = new String[mercadoLibre.getOrders().size()];
-                for (int i = 0; i < arr.length; i++) {
+    public String searchOrderByBuyerName(String min, String max, boolean minToMax, boolean preffix) {
+        if (preffix) {
+            mercadoLibre.getOrders().sort(Comparator.comparing(Order::getNameBuyer));
+            String[] arr = new String[mercadoLibre.getOrders().size()];
+            for (int i = 0; i < arr.length; i++) {
+                if(mercadoLibre.getOrders().get(i).getNameBuyer().length()>=min.length()){
                     arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, min.length()).toLowerCase();
+                }else{
+                    arr[i] = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
                 }
-                String[] arr2 = new String[mercadoLibre.getOrders().size()];
-                for (int i = 0; i < arr2.length; i++) {
-                    arr2[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, max.length()).toLowerCase();
-                }
-                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
-                return printInRange(position, minToMax, false);
-            } else {
-                final int lastIndex = max.length();
-                Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
-                    @Override
-                    public int compare(Order p1, Order p2) {
-                        String sufijo1 = p1.getNameBuyer().substring(p1.getNameBuyer().length() - lastIndex);
-                        String sufijo2 = p2.getNameBuyer().substring(p2.getNameBuyer().length() - lastIndex);
-                        return sufijo1.compareTo(sufijo2);
-                    }
-                });
-
-                String[] arr = new String[mercadoLibre.getOrders().size()];
-                for (int i = 0; i < arr.length; i++) {
-                    String temp = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
-                    arr[i] = temp.substring(temp.length() - min.length());
-                }
-                String[] arr2 = new String[mercadoLibre.getOrders().size()];
-                for (int i = 0; i < arr2.length; i++) {
-                    String temp = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
-                    arr2[i] = temp.substring(temp.length() - max.length());
-                }
-                ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
-                return printInRange(position, minToMax, false);
             }
-        } catch (StringIndexOutOfBoundsException e) {
-            return "\nThere are some orders that might have a lenght shother than the sufix or prefix\n";
+            String[] arr2 = new String[mercadoLibre.getOrders().size()];
+            for (int i = 0; i < arr2.length; i++) {
+                if(mercadoLibre.getOrders().get(i).getNameBuyer().length()>=max.length()){
+                    arr2[i] = mercadoLibre.getOrders().get(i).getNameBuyer().substring(0, max.length()).toLowerCase();
+                }else{
+                    arr2[i] = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
+                }
+            }
+            ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+            return printInRange(position, minToMax, false);
+        } else {
+            final int lastIndex = max.length();
+            Collections.sort(mercadoLibre.getOrders(), new Comparator<Order>() {
+                @Override
+                public int compare(Order p1, Order p2) {
+                    String sufijo1 = "";
+                    if(p1.getNameBuyer().length()>=min.length()){
+                        sufijo1= p1.getNameBuyer().substring(p1.getNameBuyer().length() - lastIndex).toLowerCase();
+                    }else{
+                        sufijo1= p1.getNameBuyer().toLowerCase();
+                    }
+                    String sufijo2 = "";
+                    if(p2.getNameBuyer().length()>=min.length()){
+                        sufijo2= p2.getNameBuyer().substring(p2.getNameBuyer().length() - lastIndex).toLowerCase();
+                    }else{
+                        sufijo2= p2.getNameBuyer().toLowerCase();
+                    }
+                    return sufijo1.compareTo(sufijo2);
+                }
+            });
 
+            String[] arr = new String[mercadoLibre.getOrders().size()];
+            for (int i = 0; i < arr.length; i++) {
+                String temp = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
+                if(temp.length()>=max.length()){
+                    arr[i] = temp.substring(temp.length() - max.length());
+                }else{
+                    arr[i] = temp;
+                }
+            }
+            String[] arr2 = new String[mercadoLibre.getOrders().size()];
+            for (int i = 0; i < arr2.length; i++) {
+                String temp = mercadoLibre.getOrders().get(i).getNameBuyer().toLowerCase();
+                if(temp.length()>=max.length()){
+                    arr2[i] = temp.substring(temp.length() - max.length());
+                }else{
+                    arr2[i] = temp;
+                }
+            }
+            ArrayList<Integer> position = stringSearcher.binarySearchStringRange(arr, arr2, min, max);
+            return printInRange(position, minToMax, false);
         }
     }
 
@@ -660,6 +666,7 @@ public class MLController {
      */
     public String printInRange(ArrayList<Integer> position, boolean minToMax, boolean isProduct) {
         StringBuilder msj = new StringBuilder();
+
         if (position == null || position.isEmpty()) {
             return "\nThere are not elements on this range";
         }

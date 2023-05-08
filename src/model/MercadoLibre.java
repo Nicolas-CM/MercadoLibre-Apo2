@@ -65,12 +65,8 @@ public class MercadoLibre {
      * @param product The new product
      * @return The result of the operation
      */
-    public String addProduct(Product product){
-        if (products.add(product)) {
-            return "The process was correct";
-        } else {
-            return "The process was incorrect";
-        }
+    public void addProduct(Product product){
+        products.add(product);
     }
     
     /**
@@ -79,12 +75,8 @@ public class MercadoLibre {
      * @param order The new order
      * @return The result of the operation
      */
-    public String addOrder(Order order){
-        if (orders.add(order)) {
-            return "The process was correct";
-        } else {
-            return "The process was incorrect";
-        }
+    public void addOrder(Order order){
+        orders.add(order);
     }
 
     
