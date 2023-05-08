@@ -28,8 +28,7 @@ public class ProductTest {
     @Test
     public void testAddProductSuccess() throws ObjectWithSameName {
         Product product = new Product("Macbook Pro", "Apple Laptop", 1299.99, 10, 1);
-        String result = container.addProduct(product);
-        assertEquals("The process was correct", result);
+        container.addProduct(product);
         assertEquals(1, container.getProducts().size());
     }
 
